@@ -1,11 +1,11 @@
 #include "App.hpp"
-
 #include "Util/Image.hpp"
 #include "Util/Input.hpp"
 #include "Util/Keycode.hpp"
 #include "Util/Logger.hpp"
-
 #include "GiraffeText.hpp"
+#include "Beel_Fly.h"
+#include "DialogueBox.h"
 
 void App::Start() {
     LOG_TRACE("Start");
@@ -17,6 +17,14 @@ void App::Start() {
 
     m_Root.AddChild(m_Giraffe);
     m_Root.AddChild(m_Cat);
+
+    auto beelFly = std::make_shared<Beel_Fly>();
+    m_Root.AddChild(beelFly);
+
+    m_DialogueBox = std::make_shared<DialogueBox>();
+    m_Root.AddChild(m_DialogueBox);
+    m_DialogueBox->SetText("Welcome to the game!");
+
 
     m_CurrentState = State::UPDATE;
 }
@@ -55,8 +63,9 @@ void App::Update() {
 
     m_Giraffe->Update();
     m_Cat->Update();
-
     m_Root.Update();
+
+    m_DialogueBox->Update();
 
     // press SPACE to toggle demo window
     if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {

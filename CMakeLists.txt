@@ -94,6 +94,8 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/Util/Base64.hpp
     ${INCLUDE_DIR}/Util/Animation.hpp
     ${INCLUDE_DIR}/Util/Position.hpp
+        include/Beel_Fly.cpp
+        include/Beel_Fly.h
 )
 set(EXAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example)
 set(EXAMPLE_FILES
@@ -107,6 +109,9 @@ set(EXAMPLE_FILES
     ${EXAMPLE_DIR}/include/Giraffe.hpp
     ${EXAMPLE_DIR}/include/GiraffeText.hpp
     ${EXAMPLE_DIR}/include/Cat.hpp
+        include/Beel_Fly.h
+        include/DialogueBox.cpp
+        include/DialogueBox.h
 )
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(TEST_FILES
