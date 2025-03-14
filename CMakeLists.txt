@@ -110,8 +110,8 @@ set(EXAMPLE_FILES
     ${EXAMPLE_DIR}/include/GiraffeText.hpp
     ${EXAMPLE_DIR}/include/Cat.hpp
         include/Beel_Fly.h
-        include/DialogueBox.cpp
-        include/DialogueBox.h
+        include/DialogueBG.cpp
+        include/DialogueBG.h
 )
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(TEST_FILES
