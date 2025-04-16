@@ -126,6 +126,8 @@ public:
      */
     void Pause();
 
+    void SetFrameRange(std::size_t start, std::size_t end);
+
 private:
     /**
      * @brief Update the animation frames.
@@ -142,6 +144,9 @@ private:
 
     unsigned long m_CooldownEndTime = 0;
     double m_TimeBetweenFrameUpdate = 0;
+
+    std::size_t m_FrameStart = 0;
+    std::size_t m_FrameEnd = 0;
 
     std::size_t m_Index = 0;
 };

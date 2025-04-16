@@ -1,4 +1,3 @@
-
 #ifndef HERO_H
 #define HERO_H
 #include "pch.hpp"
@@ -15,9 +14,13 @@ public:
         WIN,
     };
 
+    State m_State = State::DEFAULT;
+
     void Update();
+
 
 private:
     std::shared_ptr<Util::Animation> m_Animation;
+
 };
 #endif // HERO_H

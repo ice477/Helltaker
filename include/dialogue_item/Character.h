@@ -5,9 +5,9 @@
 #include "../Util/GameObject.hpp"
 #include "../pch.hpp"
 
-class Beel_Fly : public Util::GameObject {
+class Character : public Util::GameObject {
 public:
-    Beel_Fly();
+    Character();
 
     void Update();
 

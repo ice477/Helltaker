@@ -2,11 +2,12 @@
 #define STAGEBG_H
 
 #include "../Util/Animation.hpp"
+#include "../Util/GameObject.hpp"
+#include "../pch.hpp"
 #include <memory>
-#include <string>
-#include <vector>
 
-class StageBG {
+
+class StageBG : public Util::GameObject {
 public:
     StageBG();
     void Update();

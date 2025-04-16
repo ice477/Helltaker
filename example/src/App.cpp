@@ -1,81 +1,84 @@
 #include "App.hpp"
+#include "GiraffeText.hpp"
 #include "Util/Image.hpp"
 #include "Util/Input.hpp"
 #include "Util/Keycode.hpp"
 #include "Util/Logger.hpp"
-#include "GiraffeText.hpp"
-#include "Beel_Fly.h"
-#include "DialogueBox.h"
+#include "Util/Renderer.hpp"
+#include "game_item/StageBG.h"
 
 void App::Start() {
     LOG_TRACE("Start");
 
     m_Giraffe->SetDrawable(
-        std::make_shared<Util::Image>("../assets/sprites/giraffe.png"));
-    m_Giraffe->SetZIndex(5);
+        std::make_shared<Util::Image>("../assets/Texture2D/boxExport0001.png", "../assets/Texture2D/boxExport0002.png"));
+    m_Giraffe->SetZIndex(4);
     m_Giraffe->Start();
+    m_Giraffe->SetVisible(false);
 
-    m_Root.AddChild(m_Giraffe);
+
     m_Root.AddChild(m_Cat);
+    m_Cat->SetVisible(false);
 
-    auto beelFly = std::make_shared<Beel_Fly>();
-    m_Root.AddChild(beelFly);
+    m_Root.AddChild(m_Character);
 
-    m_DialogueBox = std::make_shared<DialogueBox>();
-    m_Root.AddChild(m_DialogueBox);
-    m_DialogueBox->SetText("Welcome to the game!");
-
+    m_Root.AddChild(m_StageBG);
+    m_Root.AddChild(m_Hero);
 
     m_CurrentState = State::UPDATE;
 }
 
 void App::Update() {
-    if (Util::Input::IsKeyPressed(Util::Keycode::MOUSE_LB)) {
-        LOG_DEBUG("Left button pressed");
-    }
-    if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_RB)) {
-        LOG_DEBUG("Right button down");
-    }
-    if (Util::Input::IsKeyUp(Util::Keycode::MOUSE_RB)) {
-        LOG_DEBUG("Right button up");
-    }
-    if (Util::Input::IfScroll()) {
-        auto delta = Util::Input::GetScrollDistance();
-        LOG_DEBUG("Scrolling: x: {}, y: {}", delta.x, delta.y);
-    }
-    if (Util::Input::IsMouseMoving()) {
-        // LOG_DEBUG("Mouse moving! x:{}, y{}", cursorPos.x, cursorPos.y);
-    }
+    Visible();
 
-    if (Util::Input::IsKeyUp(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
-        m_CurrentState = State::END;
-    }
-
-    if (Util::Input::IsKeyDown(Util::Keycode::A)) {
-        LOG_DEBUG("A Down");
-    }
-
-    if (Util::Input::IsKeyPressed(Util::Keycode::B)) {
-        LOG_DEBUG("B Pressed. Setting the cursor to (0, 0).");
-        Util::Input::SetCursorPosition({0.0F, 0.0F});
-        LOG_DEBUG("Cursor set to {}.", Util::Input::GetCursorPosition());
-    }
+    m_Character->Update();
+    m_Character->SetVisible(true);
 
     m_Giraffe->Update();
     m_Cat->Update();
     m_Root.Update();
 
-    m_DialogueBox->Update();
-
-    // press SPACE to toggle demo window
     if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
         showDemoWindow = !showDemoWindow;
     }
     if (showDemoWindow) {
         ImGui::ShowDemoWindow();
     }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        m_CurrentState = State::PUSH_BOX;
+    }
 }
 
-void App::End() { // NOLINT(this method will mutate members in the future)
+void App::Push_Box() {
+    Visible();
+
+    m_StageBG->Update();
+    m_Hero->Update();
+    m_Root.Update();
+    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        m_CurrentState = State::UPDATE;
+        currentLevel ++;
+    }
+}
+
+void App::End() {
     LOG_TRACE("End");
+}
+
+void App::Visible() {
+    if (m_CurrentState == State::UPDATE) {
+        m_Character->SetVisible(true);
+        m_StageBG->SetVisible(false);
+        m_Hero->SetVisible(false);
+    } else if (m_CurrentState == State::PUSH_BOX) {
+        m_Character->SetVisible(false);
+        m_StageBG->SetVisible(true);
+        m_Hero->SetVisible(true);
+    } else {
+        m_Character->SetVisible(false);
+        m_StageBG->SetVisible(false);
+    }
 }

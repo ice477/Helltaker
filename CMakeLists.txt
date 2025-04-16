@@ -94,8 +94,8 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/Util/Base64.hpp
     ${INCLUDE_DIR}/Util/Animation.hpp
     ${INCLUDE_DIR}/Util/Position.hpp
-        include/Beel_Fly.cpp
-        include/Beel_Fly.h
+        include/dialogue_item/Character.cpp
+        include/dialogue_item/Character.h
 )
 set(EXAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example)
 set(EXAMPLE_FILES
@@ -109,9 +109,19 @@ set(EXAMPLE_FILES
     ${EXAMPLE_DIR}/include/Giraffe.hpp
     ${EXAMPLE_DIR}/include/GiraffeText.hpp
     ${EXAMPLE_DIR}/include/Cat.hpp
-        include/Beel_Fly.h
-        include/DialogueBG.cpp
-        include/DialogueBG.h
+        include/dialogue_item/Character.h
+        include/dialogue_item/DialogueBG.cpp
+        include/dialogue_item/DialogueBG.h
+        include/game_item/Hero.cpp
+        include/game_item/Hero.h
+        include/game_item/StageBG.cpp
+        include/game_item/StageBG.h
+        include/game_item/Box.cpp
+        include/game_item/Box.h
+        include/game_item/Enemy.cpp
+        include/game_item/Enemy.h
+        include/game_item/Gate.cpp
+        include/game_item/Gate.h
 )
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(TEST_FILES

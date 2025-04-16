@@ -45,6 +45,15 @@ void Animation::Pause() {
     }
 }
 
+void Animation::SetFrameRange(std::size_t start, std::size_t end) {
+    if (start >= m_Frames.size() || end >= m_Frames.size() || start > end) {
+        throw std::out_of_range("Invalid frame range");
+    }
+    m_FrameStart = start;
+    m_FrameEnd = end;
+    m_Index = m_FrameStart; // 重置到範圍的起始幀
+}
+
 void Animation::Update() {
     unsigned long nowTime = Util::Time::GetElapsedTimeMs();
     if (m_State == State::PAUSE || m_State == State::ENDED) {
@@ -68,13 +77,14 @@ void Animation::Update() {
     m_Index += updateFrameCount;
     m_TimeBetweenFrameUpdate = 0;
 
-    unsigned int const totalFramesCount = m_Frames.size();
-    if (m_Index >= totalFramesCount) {
+    if (m_Index > m_FrameEnd) { // 限制在範圍內
         if (m_Looping) {
             m_CooldownEndTime = nowTime + m_Cooldown;
+            m_Index = m_FrameStart; // 從範圍起始幀重新播放
+        } else {
+            m_State = State::ENDED;
+            m_Index = m_FrameEnd; // 停留在範圍的最後一幀
         }
-        m_State = m_Looping ? State::COOLDOWN : State::ENDED;
-        m_Index = m_Frames.size() - 1;
     }
-};
+}
 } // namespace Util
