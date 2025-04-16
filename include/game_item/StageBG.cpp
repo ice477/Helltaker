@@ -18,7 +18,7 @@ StageBG::StageBG()
           false, 50, false, 1000)) {
             m_Transform.translation = {0 ,0}; // 初始化位置
             m_Transform.scale = {0.75f, 0.75f};
-
+    m_BackgroundAnimation->SetFrameRange(1,1);
     SetDrawable(m_BackgroundAnimation);
     SetZIndex(0);
 }

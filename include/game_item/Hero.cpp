@@ -1,5 +1,6 @@
 #include "Hero.h"
 #include "Util/Input.hpp"
+#include <cmath>
 
 
 
@@ -24,8 +25,8 @@ Hero::Hero()
               "../assets/Texture2D/hero0050.png", "../assets/Texture2D/hero0051.png", "../assets/Texture2D/hero0052.png", "../assets/Texture2D/hero0059.png",
           },
           true, 50, true, 100)) {
-    m_Transform.scale = {0.65f, 0.65f};
-    m_Transform.translation = {0 ,110};
+    m_Transform.scale = {0.75f, 0.75f};
+    m_Transform.translation = {0 ,100};
     SetDrawable(m_Animation);
     m_Animation->SetFrameRange(0,11);
     SetZIndex(5);
@@ -37,19 +38,64 @@ void Hero::Update() {
     //移動邏輯
     if (m_State != State::MOVE) {
         if (Util::Input::IsKeyDown(Util::Keycode::S)) {
-            m_Transform.translation.y -= 75;
+            m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - 75};
+            m_State = State::MOVE;
+            m_Animation->SetFrameRange(12, 17); // 設置 MOVE 動畫範圍
         } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
-            m_Transform.translation.y += 75;
+            m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + 75};
+            m_State = State::MOVE;
+            m_Animation->SetFrameRange(12, 17);
         } else if (Util::Input::IsKeyDown(Util::Keycode::A)) {
-            m_Transform.translation.x -= 75;
-            m_Transform.scale.x = -0.65f;
+            m_TargetPosition = {m_Transform.translation.x - 75, m_Transform.translation.y};
+            m_Transform.scale.x = -0.75f;
+            m_State = State::MOVE;
+            m_Animation->SetFrameRange(12, 17);
         } else if (Util::Input::IsKeyDown(Util::Keycode::D)) {
-            m_Transform.translation.x += 75;
-            m_Transform.scale.x = 0.65f;
+            m_TargetPosition = {m_Transform.translation.x + 75, m_Transform.translation.y};
+            m_Transform.scale.x = 0.75f;
+            m_State = State::MOVE;
+            m_Animation->SetFrameRange(12, 17);
         }
     }
 
+    // 平滑移動邏輯
+    if (m_State == State::MOVE) {
+        float speed = 750.0f; // 每秒移動的距離
+        float deltaTime = 1.0f / 60.0f; // 假設每幀 1/60 秒
+        float step = speed * deltaTime;
 
+        // 計算新的位置
+        if (std::abs(m_Transform.translation.x - m_TargetPosition.x) > step) {
+            m_Transform.translation.x += (m_TargetPosition.x > m_Transform.translation.x ? step : -step);
+        } else {
+            m_Transform.translation.x = m_TargetPosition.x;
+        }
 
+        if (std::abs(m_Transform.translation.y - m_TargetPosition.y) > step) {
+            m_Transform.translation.y += (m_TargetPosition.y > m_Transform.translation.y ? step : -step);
+        } else {
+            m_Transform.translation.y = m_TargetPosition.y;
+        }
+
+        // 檢查是否到達目標位置
+        if (m_Transform.translation.x == m_TargetPosition.x && m_Transform.translation.y == m_TargetPosition.y) {
+            m_State = State::DEFAULT;
+            m_Animation->SetFrameRange(0, 11); // 恢復 DEFAULT 動畫範圍
+        }
+    }
 }
 
+void Hero::Initialize(MapManager& mapMgr) {
+    auto p = mapMgr.GetPlayerInitialPosition();
+    m_PosX = p.first;
+    m_PosY = p.second;
+}
+
+void Hero::Move(int dx, int dy, MapManager& mapMgr) {
+    int newX = m_PosX + dx;
+    int newY = m_PosY + dy;
+    if (mapMgr.CanMove(newX, newY)) {
+        m_PosX = newX;
+        m_PosY = newY;
+    }
+}
