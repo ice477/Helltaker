@@ -7,10 +7,10 @@
 class Gate : public Box {
 public:
     Gate();
-    bool Push(const glm::vec2& direction) override; // 覆寫推動邏輯
+    void Update();
 
 private:
-    bool PlayerHasKey(); // 檢查玩家是否有鑰匙
+    std::shared_ptr<Util::Animation> m_Animation; // 檢查玩家是否有鑰匙
 };
 
 #endif

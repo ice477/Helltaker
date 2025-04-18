@@ -2,20 +2,19 @@
 #include "Gate.h"
 
 Gate::Gate() {
-    // 初始化 Gate 的屬性
+    m_Animation = std::make_shared<Util::Animation>(
+        std::vector<std::string>{"../assets/Texture2D/backup_lockbox.png",
+        },
+        false, 50, false, 100);
+    m_Transform.scale = {0.75f, 0.75f};
+    m_Transform.translation = {75 ,100};
+    SetDrawable(m_Animation);
     SetZIndex(5);
 }
 
-bool Gate::Push(const glm::vec2& direction) {
-    if (PlayerHasKey()) {
-        SetVisible(false); // 消除 Gate
-        return true;
+void Gate::Update() {
+    // 更新動畫
+    if (m_Animation) {
+        m_Animation->Play();
     }
-    return false; // 沒有鑰匙則無法推動
-}
-
-bool Gate::PlayerHasKey() {
-    // 檢查玩家是否持有鑰匙
-    // 這裡可以加入具體的檢測邏輯
-    return true; // 假設玩家有鑰匙
 }

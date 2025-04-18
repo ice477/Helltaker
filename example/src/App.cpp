@@ -22,8 +22,15 @@ void App::Start() {
 
     m_Root.AddChild(m_Character);
 
+    m_Root.AddChild(m_Trans);
+    m_Trans->SetVisible(false);
+
     m_Root.AddChild(m_StageBG);
     m_Root.AddChild(m_Hero);
+    m_Root.AddChild(m_Box);
+    m_Root.AddChild(m_Gate);
+    m_Root.AddChild(m_Enemy);
+    m_Root.AddChild(m_Key);
 
     m_CurrentState = State::UPDATE;
 }
@@ -34,19 +41,14 @@ void App::Update() {
     m_Character->Update();
     m_Character->SetVisible(true);
 
-    m_Giraffe->Update();
     m_Cat->Update();
     m_Root.Update();
 
-    if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
-        showDemoWindow = !showDemoWindow;
-    }
-    if (showDemoWindow) {
-        ImGui::ShowDemoWindow();
-    }
+
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+
         m_CurrentState = State::PUSH_BOX;
     }
 }
@@ -56,6 +58,10 @@ void App::Push_Box() {
 
     m_StageBG->Update();
     m_Hero->Update();
+    m_Box->Update();
+    m_Gate->Update();
+    m_Enemy->Update();
+    m_Key->Update();
     m_Root.Update();
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
@@ -73,10 +79,18 @@ void App::Visible() {
         m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
         m_Hero->SetVisible(false);
+        m_Box->SetVisible(false);
+        m_Gate->SetVisible(false);
+        m_Enemy->SetVisible(false);
+        m_Key->SetVisible(false);
     } else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
         m_Hero->SetVisible(true);
+        m_Box->SetVisible(true);
+        m_Gate->SetVisible(true);
+        m_Enemy->SetVisible(true);
+        m_Key->SetVisible(true);
     } else {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);

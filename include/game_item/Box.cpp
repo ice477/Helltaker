@@ -8,9 +8,10 @@ Box::Box() {
                                  "../assets/Texture2D/boxExport0010.png", "../assets/Texture2D/boxExport0011.png",
         },
         false, 50, false, 100);
-
+    m_Transform.scale = {0.75f, 0.75f};
+    m_Transform.translation = {75 ,25};
     SetDrawable(m_Animation);
-    SetZIndex(4);
+    SetZIndex(5);
 }
 
 void Box::Update() {
@@ -20,16 +21,3 @@ void Box::Update() {
     }
 }
 
-bool Box::Push(const glm::vec2& direction) {
-    if (!CheckObstacle(direction)) {
-        m_Transform.translation += direction * 75.0f; // 推動距離
-        return true;
-    }
-    return false;
-}
-
-bool Box::CheckObstacle(const glm::vec2& direction) {
-    // 簡單檢查是否超出邊界
-    glm::vec2 newPosition = m_Transform.translation + direction * 75.0f;
-    return (newPosition.x < 0 || newPosition.y < 0 || newPosition.x > 800 || newPosition.y > 600);
-}

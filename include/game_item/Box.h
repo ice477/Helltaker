@@ -8,11 +8,7 @@
 class Box : public Util::GameObject {
 public:
     Box();
-    virtual void Update(); // 更新邏輯
-    virtual bool Push(const glm::vec2& direction); // 推動邏輯
-
-protected:
-    bool CheckObstacle(const glm::vec2& direction); // 檢查是否有障礙物
+    void Update(); // 更新邏輯
 
 private:
     std::shared_ptr<Util::Animation> m_Animation; // 動畫屬性

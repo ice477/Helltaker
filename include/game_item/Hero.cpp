@@ -29,7 +29,7 @@ Hero::Hero()
     m_Transform.translation = {0 ,100};
     SetDrawable(m_Animation);
     m_Animation->SetFrameRange(0,11);
-    SetZIndex(5);
+    SetZIndex(7);
     m_State = State::DEFAULT;
 }
 
