@@ -22,8 +22,9 @@ void App::Start() {
 
     m_Root.AddChild(m_Character);
 
+
     m_Root.AddChild(m_Trans);
-    m_Trans->SetVisible(false);
+    m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
     m_Root.AddChild(m_Hero);
@@ -31,6 +32,8 @@ void App::Start() {
     m_Root.AddChild(m_Gate);
     m_Root.AddChild(m_Enemy);
     m_Root.AddChild(m_Key);
+
+
 
     m_CurrentState = State::UPDATE;
 }
@@ -40,6 +43,9 @@ void App::Update() {
 
     m_Character->Update();
     m_Character->SetVisible(true);
+
+
+    m_Trans->Update();
 
     m_Cat->Update();
     m_Root.Update();
@@ -57,6 +63,8 @@ void App::Push_Box() {
     Visible();
 
     m_StageBG->Update();
+    m_Trans->Update();
+
     m_Hero->Update();
     m_Box->Update();
     m_Gate->Update();

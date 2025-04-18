@@ -15,10 +15,9 @@ Character::Character()
     SetDrawable(m_Animation);
     SetZIndex(5);
     SetVisible(false);
-    m_Animation->SetFrameRange(0, 0); // 設置動畫範圍
+    m_Animation->SetFrameRange(0, 1); // 設置動畫範圍
 }
 
 void Character::Update() {
-    // Update logic for Beel_Fly
 
 }

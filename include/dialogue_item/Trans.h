@@ -16,7 +16,6 @@ public:
 
 private:
     std::shared_ptr<Util::Animation> m_Animation;
-    bool m_IsPlaying = false;
 };
 
 #endif
