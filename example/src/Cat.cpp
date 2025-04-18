@@ -18,6 +18,8 @@ Cat::Cat()
           true, 50, true, 10)) {
     m_Transform.translation = {-200, 200};
     SetDrawable(m_Animation);
+    SetZIndex(1);
+    m_Animation->SetFrameRange(0, 7); // 設置動畫範圍
 }
 
 void Cat::Update() {
@@ -49,11 +51,11 @@ void Cat::Update() {
         m_Animation->SetLooping(true);
     }
 
-    if (Util::Input::IsKeyUp(Util::Keycode::K)) {
+    if (Util::Input::IsKeyUp(Util::Keycode::L)) {
         m_Animation->SetInterval(50);
     }
-    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
-        m_Animation->SetInterval(500);
+    if (Util::Input::IsKeyDown(Util::Keycode::P)) {
+        m_Animation->SetInterval(5000);
     }
     if (Util::Input::IsKeyDown(Util::Keycode::O)) {
         m_Animation->SetCurrentFrame(5);

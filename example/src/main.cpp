@@ -23,6 +23,10 @@ int main(int, char **) {
             app.Update();
             break;
 
+        case App::State::PUSH_BOX:
+            app.Push_Box();
+            break;
+
         case App::State::END:
             app.End();
             context->SetExit(true);
