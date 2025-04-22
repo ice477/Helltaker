@@ -41,7 +41,27 @@ void App::Start() {
 }
 
 void App::Update() {
-    if (m_CurrentState == State::PUSH_BOX) {
+
+    Visible();
+    m_Character->Update();
+    m_Character->SetVisible(true);
+
+    m_Trans->Update();
+    m_Cat->Update();
+    m_Root.Update();
+
+    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        m_CurrentState = State::PUSH_BOX;
+    }
+}
+
+void App::Push_Box() {
+    static bool isMapLoaded = false; // 靜態變量，用於記錄地圖是否已加載
+
+    if (!isMapLoaded) {
+        LOG_DEBUG("Initializing map for PUSH_BOX scene.");
+
         // 初始化地圖和物件
         MapManager mapManager;
         if (mapManager.LoadMap("../assets/maps/test_map.txt")) {
@@ -49,14 +69,14 @@ void App::Update() {
 
             const auto& mapData = mapManager.GetMapData();
             constexpr int tileSize = 75;
-            constexpr int offsetX = -225;
+            constexpr int offsetX = -300;
             constexpr int offsetY = -275;
 
             for (int y = 0; y < static_cast<int>(mapData.size()); y++) {
                 for (int x = 0; x < static_cast<int>(mapData[y].size()); x++) {
                     int tile = mapData[y][x];
-                    int worldX = offsetX + x * tileSize;
-                    int worldY = offsetY + y * tileSize;
+                    int worldX = offsetX + y * tileSize; // 修正：使用 y 計算 X 軸
+                    int worldY = offsetY + x * tileSize; // 修正：使用 x 計算 Y 軸
 
                     switch (tile) {
                     case 2: // Hero
@@ -89,26 +109,13 @@ void App::Update() {
                     }
                 }
             }
+
+            isMapLoaded = true; // 標記地圖已加載
         } else {
             LOG_ERROR("Failed to load map for level {}", currentLevel);
         }
     }
 
-    Visible();
-    m_Character->Update();
-    m_Character->SetVisible(true);
-
-    m_Trans->Update();
-    m_Cat->Update();
-    m_Root.Update();
-
-    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
-        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
-        m_CurrentState = State::PUSH_BOX;
-    }
-}
-
-void App::Push_Box() {
     Visible();
 
     m_StageBG->Update();
@@ -120,10 +127,12 @@ void App::Push_Box() {
     m_Enemy->Update();
     m_Key->Update();
     m_Root.Update();
+
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
-        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        LOG_DEBUG("K Pressed. Switching to UPDATE scene.");
         m_CurrentState = State::UPDATE;
-        currentLevel ++;
+        currentLevel++;
+        isMapLoaded = false; // 重置地圖加載狀態
     }
 }
 
