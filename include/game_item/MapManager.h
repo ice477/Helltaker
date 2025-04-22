@@ -12,8 +12,9 @@ public:
         Box,        // 2箱子
         Enemy,      // 3敵人
         Door,       // 4門
-        Target,      // 5目標
-        Player,
+        Key,        // 5 鑰匙
+        Target,      // 6目標
+        Player,     // 7 玩家
     };
 
     bool LoadMap(const std::string& filePath);
@@ -21,6 +22,7 @@ public:
     void PushBox(int x, int y, int newX, int newY);
 
     std::pair<int,int> GetPlayerInitialPosition() const;
+    const std::vector<std::vector<int>>& GetMapData() const;
 
 private:
     std::vector<std::vector<int>> m_MapData;

@@ -7,7 +7,6 @@ Gate::Gate() {
         },
         false, 50, false, 100);
     m_Transform.scale = {0.75f, 0.75f};
-    m_Transform.translation = {75 ,100};
     SetDrawable(m_Animation);
     SetZIndex(5);
 }

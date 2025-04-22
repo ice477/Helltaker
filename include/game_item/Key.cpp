@@ -9,7 +9,6 @@ Key::Key() {
         },
         true, 50, true, 100);
     m_Transform.scale = {0.75f, 0.75f};
-    m_Transform.translation = {150, 100}; // 預設位置
     SetDrawable(m_Animation);
     m_Animation->SetFrameRange(0, 11); // 設置動畫範圍
     SetZIndex(3); // 設置渲染層級
