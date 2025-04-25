@@ -52,15 +52,11 @@ private:
 
     std::shared_ptr<StageBG> m_StageBG = std::make_shared<StageBG>();
 
-    std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
-
-    std::shared_ptr<Box> m_Box = std ::make_shared<Box>();
-
-    std::shared_ptr<Gate> m_Gate = std ::make_shared<Gate>();
-
-    std::shared_ptr<Enemy> m_Enemy = std::make_shared<Enemy>();
-
-    std::shared_ptr<Key> m_Key = std ::make_shared<Key>();
+    std::vector<std::shared_ptr<Hero>> m_Heroes;
+    std::vector<std::shared_ptr<Box>> m_Boxes;
+    std::vector<std::shared_ptr<Enemy>> m_Enemies;
+    std::vector<std::shared_ptr<Gate>> m_Gates;
+    std::vector<std::shared_ptr<Key>> m_Keys;
 
     Util::Renderer m_Root;
 

@@ -34,7 +34,7 @@ void MapManager::PushBox(int x, int y, int newX, int newY) {
 std::pair<int, int> MapManager::GetPlayerInitialPosition() const {
     for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
         for (int x = 0; x < static_cast<int>(m_MapData[y].size()); x++) {
-            if (m_MapData[y][x] == static_cast<int>(TileType::Player)) {
+            if (m_MapData[y][x] == static_cast<int>(TileType::Hero)) {
                 return {x, y};
             }
         }

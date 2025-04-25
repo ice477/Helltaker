@@ -8,18 +8,20 @@ class MapManager {
 public:
     enum class TileType {
         Empty = 0,  // 0空地
-        Wall,       // 1牆
-        Box,        // 2箱子
-        Enemy,      // 3敵人
-        Door,       // 4門
-        Key,        // 5 鑰匙
-        Target,      // 6目標
-        Player,     // 7 玩家
+        Wall = 1,
+        Hero = 2,
+        Box = 3,
+        Enemy = 4,
+        Gate = 5,
+        Key = 6,
+        Target = 7,
     };
 
     bool LoadMap(const std::string& filePath);
     bool CanMove(int x, int y) const;
     void PushBox(int x, int y, int newX, int newY);
+
+
 
     std::pair<int,int> GetPlayerInitialPosition() const;
     const std::vector<std::vector<int>>& GetMapData() const;

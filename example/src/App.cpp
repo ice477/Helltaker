@@ -29,13 +29,22 @@ void App::Start() {
     m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
-    m_Root.AddChild(m_Hero);
-    m_Root.AddChild(m_Box);
-    m_Root.AddChild(m_Gate);
-    m_Root.AddChild(m_Enemy);
-    m_Root.AddChild(m_Key);
 
-
+    for (const auto& hero : m_Heroes) {
+        m_Root.AddChild(hero);
+    }
+    for (const auto& gate : m_Gates) {
+        m_Root.AddChild(gate);
+    }
+    for (const auto& key : m_Keys) {
+        m_Root.AddChild(key);
+    }
+    for (const auto& enemy : m_Enemies) {
+        m_Root.AddChild(enemy);
+    }
+    for (const auto& box : m_Boxes) {
+        m_Root.AddChild(box);
+    }
 
     m_CurrentState = State::UPDATE;
 }
@@ -69,46 +78,78 @@ void App::Push_Box() {
 
             const auto& mapData = mapManager.GetMapData();
             constexpr int tileSize = 75;
-            constexpr int offsetX = -300;
+            constexpr int offsetX = -225;
             constexpr int offsetY = -275;
+
+
 
             for (int y = 0; y < static_cast<int>(mapData.size()); y++) {
                 for (int x = 0; x < static_cast<int>(mapData[y].size()); x++) {
                     int tile = mapData[y][x];
-                    int worldX = offsetX + y * tileSize; // 修正：使用 y 計算 X 軸
-                    int worldY = offsetY + x * tileSize; // 修正：使用 x 計算 Y 軸
+                    int worldX = offsetX + x * tileSize; // X 軸保持不變
+                    int worldY = offsetY + (mapData.size() - 1 - y) * tileSize; // Y 軸翻轉
 
                     switch (tile) {
-                    case 2: // Hero
-                        m_Hero->m_Transform.translation = {worldX, worldY};
-                        m_Hero->SetVisible(true);
+                    case 2: { // Hero
+                        auto hero = std::make_shared<Hero>();
+                        hero->m_Transform.translation = {worldX, worldY};
+                        hero->SetVisible(true);
+                        m_Heroes.push_back(hero);
                         LOG_DEBUG("Hero placed at ({}, {})", worldX, worldY);
                         break;
-                    case 3: // Box
-                        m_Box->m_Transform.translation = {worldX, worldY};
-                        m_Box->SetVisible(true);
+                    }
+                    case 3: { // Box
+                        auto box = std::make_shared<Box>();
+                        box->m_Transform.translation = {worldX, worldY};
+                        box->SetVisible(true);
+                        m_Boxes.push_back(box);
                         LOG_DEBUG("Box placed at ({}, {})", worldX, worldY);
                         break;
-                    case 4: // Enemy
-                        m_Enemy->m_Transform.translation = {worldX, worldY};
-                        m_Enemy->SetVisible(true);
+                    }
+                    case 4: { // Enemy
+                        auto enemy = std::make_shared<Enemy>();
+                        enemy->m_Transform.translation = {worldX, worldY};
+                        enemy->SetVisible(true);
+                        m_Enemies.push_back(enemy);
                         LOG_DEBUG("Enemy placed at ({}, {})", worldX, worldY);
                         break;
-                    case 5: // Gate
-                        m_Gate->m_Transform.translation = {worldX, worldY};
-                        m_Gate->SetVisible(true);
+                    }
+                    case 5: { // Gate
+                        auto gate = std::make_shared<Gate>();
+                        gate->m_Transform.translation = {worldX, worldY};
+                        gate->SetVisible(true);
+                        m_Gates.push_back(gate);
                         LOG_DEBUG("Gate placed at ({}, {})", worldX, worldY);
                         break;
-                    case 6: // Key
-                        m_Key->m_Transform.translation = {worldX, worldY};
-                        m_Key->SetVisible(true);
+                    }
+                    case 6: { // Key
+                        auto key = std::make_shared<Key>();
+                        key->m_Transform.translation = {worldX, worldY};
+                        key->SetVisible(true);
+                        m_Keys.push_back(key);
                         LOG_DEBUG("Key placed at ({}, {})", worldX, worldY);
                         break;
+                    }
+                    case 7: { // Target
+                        auto key = std::make_shared<Key>();
+                        key->m_Transform.translation = {worldX, worldY};
+                        key->SetVisible(true);
+                        m_Keys.push_back(key);
+                        LOG_DEBUG("Key placed at ({}, {})", worldX, worldY);
+                        break;
+                    }
                     default:
                         break;
                     }
                 }
             }
+
+            // 將所有物件添加到場景樹中
+            for (const auto& hero : m_Heroes) m_Root.AddChild(hero);
+            for (const auto& box : m_Boxes) m_Root.AddChild(box);
+            for (const auto& enemy : m_Enemies) m_Root.AddChild(enemy);
+            for (const auto& gate : m_Gates) m_Root.AddChild(gate);
+            for (const auto& key : m_Keys) m_Root.AddChild(key);
 
             isMapLoaded = true; // 標記地圖已加載
         } else {
@@ -121,11 +162,11 @@ void App::Push_Box() {
     m_StageBG->Update();
     m_Trans->Update();
 
-    m_Hero->Update();
-    m_Box->Update();
-    m_Gate->Update();
-    m_Enemy->Update();
-    m_Key->Update();
+    for (const auto& hero : m_Heroes) hero->Update();
+    for (const auto& box : m_Boxes) box->Update();
+    for (const auto& enemy : m_Enemies) enemy->Update();
+    for (const auto& gate : m_Gates) gate->Update();
+    for (const auto& key : m_Keys) key->Update();
     m_Root.Update();
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
@@ -144,19 +185,21 @@ void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
         m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
-        m_Hero->SetVisible(false);
-        m_Box->SetVisible(false);
-        m_Gate->SetVisible(false);
-        m_Enemy->SetVisible(false);
-        m_Key->SetVisible(false);
+
+        for (const auto& hero : m_Heroes) hero->SetVisible(false);
+        for (const auto& box : m_Boxes) box->SetVisible(false);
+        for (const auto& gate : m_Gates) gate->SetVisible(false);
+        for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
+        for (const auto& key : m_Keys) key->SetVisible(false);
     } else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
-        m_Hero->SetVisible(true);
-        m_Box->SetVisible(true);
-        m_Gate->SetVisible(true);
-        m_Enemy->SetVisible(true);
-        m_Key->SetVisible(true);
+
+        for (const auto& hero : m_Heroes) hero->SetVisible(true);
+        for (const auto& box : m_Boxes) box->SetVisible(true);
+        for (const auto& gate : m_Gates) gate->SetVisible(true);
+        for (const auto& enemy : m_Enemies) enemy->SetVisible(true);
+        for (const auto& key : m_Keys) key->SetVisible(true);
     } else {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);
