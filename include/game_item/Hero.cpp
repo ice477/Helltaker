@@ -26,7 +26,6 @@ Hero::Hero()
           },
           true, 50, true, 100)) {
     m_Transform.scale = {0.75f, 0.75f};
-    m_Transform.translation = {0 ,100};
     SetDrawable(m_Animation);
     m_Animation->SetFrameRange(0,11);
     SetZIndex(7);
