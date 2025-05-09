@@ -83,18 +83,3 @@ void Hero::Update() {
         }
     }
 }
-
-void Hero::Initialize(MapManager& mapMgr) {
-    auto p = mapMgr.GetPlayerInitialPosition();
-    m_PosX = p.first;
-    m_PosY = p.second;
-}
-
-void Hero::Move(int dx, int dy, MapManager& mapMgr) {
-    int newX = m_PosX + dx;
-    int newY = m_PosY + dy;
-    if (mapMgr.CanMove(newX, newY)) {
-        m_PosX = newX;
-        m_PosY = newY;
-    }
-}

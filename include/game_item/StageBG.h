@@ -10,7 +10,7 @@
 class StageBG : public Util::GameObject {
 public:
     StageBG();
-    void Update();
+    void Update(int level);
 
 private:
     std::shared_ptr<Util::Animation> m_BackgroundAnimation;

@@ -64,6 +64,8 @@ private:
 
     int currentLevel = 0;
     int previousLevel = 0;
+
+    MapManager m_MapManager;
 };
 
 #endif

@@ -18,12 +18,6 @@ public:
     };
 
     bool LoadMap(const std::string& filePath);
-    bool CanMove(int x, int y) const;
-    void PushBox(int x, int y, int newX, int newY);
-
-
-
-    std::pair<int,int> GetPlayerInitialPosition() const;
     const std::vector<std::vector<int>>& GetMapData() const;
 
 private:

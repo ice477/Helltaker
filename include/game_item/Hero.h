@@ -18,9 +18,7 @@ public:
     State m_State = State::DEFAULT;
 
     void Update();
-    void Moving(bool walkable);
-    void Initialize(MapManager& mapMgr);
-    void Move(int dx, int dy, MapManager& mapMgr);
+
 
 
 private:

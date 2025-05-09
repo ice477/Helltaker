@@ -6,6 +6,7 @@
 #include "Util/Logger.hpp"
 #include "Util/Renderer.hpp"
 #include "game_item/StageBG.h"
+#include "game_item/MapManager.h"
 
 void App::Start() {
     LOG_TRACE("Start");
@@ -71,23 +72,28 @@ void App::Push_Box() {
     if (!isMapLoaded) {
         LOG_DEBUG("Initializing map for PUSH_BOX scene.");
 
+        // 清除當前關卡的物件
+        m_Heroes.clear();
+        m_Boxes.clear();
+        m_Enemies.clear();
+        m_Gates.clear();
+        m_Keys.clear();
+
         // 初始化地圖和物件
         MapManager mapManager;
         if (mapManager.LoadMap("../assets/maps/test_map.txt")) {
             LOG_INFO("Map loaded successfully for level {}", currentLevel);
 
             const auto& mapData = mapManager.GetMapData();
-            constexpr int tileSize = 75;
+            constexpr int tilesize = 75;
             constexpr int offsetX = -225;
             constexpr int offsetY = -275;
-
-
 
             for (int y = 0; y < static_cast<int>(mapData.size()); y++) {
                 for (int x = 0; x < static_cast<int>(mapData[y].size()); x++) {
                     int tile = mapData[y][x];
-                    int worldX = offsetX + x * tileSize; // X 軸保持不變
-                    int worldY = offsetY + (mapData.size() - 1 - y) * tileSize; // Y 軸翻轉
+                    int worldX = offsetX + x * tilesize; // X 軸保持不變
+                    int worldY = offsetY + (mapData.size() - 1 - y) * tilesize; // Y 軸翻轉
 
                     switch (tile) {
                     case 2: { // Hero
@@ -159,7 +165,7 @@ void App::Push_Box() {
 
     Visible();
 
-    m_StageBG->Update();
+    m_StageBG->Update(currentLevel);
     m_Trans->Update();
 
     for (const auto& hero : m_Heroes) hero->Update();
