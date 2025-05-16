@@ -18,11 +18,10 @@ public:
     };
 
     bool LoadMap(const std::string& filePath);
-    const std::vector<std::vector<int>>& GetMapData() const;
+    std::vector<std::vector<int>>& GetMapDataMutable();
 
 private:
     std::vector<std::vector<int>> m_MapData;
-
 };
 
 #endif // MAPMANAGER_H

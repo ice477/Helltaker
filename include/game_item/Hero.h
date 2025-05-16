@@ -7,7 +7,7 @@
 
 class Hero : public Util::GameObject {
 public:
-    Hero();
+    Hero(std::vector<std::vector<int>>& mapData);
     enum class State {
         DEFAULT,
         KICK,
@@ -19,12 +19,10 @@ public:
 
     void Update();
 
-
-
 private:
-    int m_PosX;  // 新增的成員變數
+    int m_PosX;
     int m_PosY;
-
+    std::vector<std::vector<int>>& m_MapData;
     std::shared_ptr<Util::Animation> m_Animation;
 
     struct Position {
@@ -32,6 +30,6 @@ private:
         float y;
     };
     Position m_TargetPosition;
-
 };
+
 #endif // HERO_H
