@@ -11,18 +11,6 @@
 void App::Start() {
     LOG_TRACE("Start");
 
-
-
-    m_Giraffe->SetDrawable(
-        std::make_shared<Util::Image>("../assets/Texture2D/boxExport0001.png", "../assets/Texture2D/boxExport0002.png"));
-    m_Giraffe->SetZIndex(4);
-    m_Giraffe->Start();
-    m_Giraffe->SetVisible(false);
-
-
-    m_Root.AddChild(m_Cat);
-    m_Cat->SetVisible(false);
-
     m_Root.AddChild(m_Character);
 
 
@@ -31,9 +19,7 @@ void App::Start() {
 
     m_Root.AddChild(m_StageBG);
 
-    for (const auto& hero : m_Heroes) {
-        m_Root.AddChild(hero);
-    }
+    m_Root.AddChild(m_Hero);
     for (const auto& gate : m_Gates) {
         m_Root.AddChild(gate);
     }
@@ -73,7 +59,7 @@ void App::Push_Box() {
         LOG_DEBUG("Initializing map for PUSH_BOX scene.");
 
         // 清除當前關卡的物件
-        m_Heroes.clear();
+        m_Hero.reset();
         m_Boxes.clear();
         m_Enemies.clear();
         m_Gates.clear();
@@ -86,7 +72,7 @@ void App::Push_Box() {
 
             auto& mapData = mapManager.GetMapDataMutable();
             constexpr int tilesize = 75;
-            constexpr int offsetX = -225;
+            constexpr int offsetX = -300;
             constexpr int offsetY = -275;
 
             for (int y = 0; y < static_cast<int>(mapData.size()); y++) {
@@ -94,13 +80,16 @@ void App::Push_Box() {
                     int tile = mapData[y][x];
                     int worldX = offsetX + x * tilesize; // X 軸保持不變
                     int worldY = offsetY + (mapData.size() - 1 - y) * tilesize; // Y 軸翻轉
+                    fmt::print("worldX: {}, worldY: {}, mapdata_size: {}\n", worldX, worldY, mapData.size());
 
                     switch (tile) {
                     case 2: { // Hero
-                        auto hero = std::make_shared<Hero>(mapData);
-                        hero->m_Transform.translation = {worldX, worldY};
-                        hero->SetVisible(true);
-                        m_Heroes.push_back(hero);
+                        if (!m_Hero) {
+                            m_Hero = std::make_shared<Hero>();
+                            m_Hero->SetMapData(mapData);
+                        }
+                        m_Hero->m_Transform.translation = {worldX, worldY};
+                        m_Hero->SetVisible(true);
                         LOG_DEBUG("Hero placed at ({}, {})", worldX, worldY);
                         break;
                     }
@@ -151,7 +140,7 @@ void App::Push_Box() {
             }
 
             // 將所有物件添加到場景樹中
-            for (const auto& hero : m_Heroes) m_Root.AddChild(hero);
+            m_Root.AddChild(m_Hero);
             for (const auto& box : m_Boxes) m_Root.AddChild(box);
             for (const auto& enemy : m_Enemies) m_Root.AddChild(enemy);
             for (const auto& gate : m_Gates) m_Root.AddChild(gate);
@@ -168,7 +157,8 @@ void App::Push_Box() {
     m_StageBG->Update(currentLevel);
     m_Trans->Update();
 
-    for (const auto& hero : m_Heroes) hero->Update();
+
+    m_Hero->Update();
     for (const auto& box : m_Boxes) box->Update();
     for (const auto& enemy : m_Enemies) enemy->Update();
     for (const auto& gate : m_Gates) gate->Update();
@@ -192,7 +182,7 @@ void App::Visible() {
         m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
 
-        for (const auto& hero : m_Heroes) hero->SetVisible(false);
+        m_Hero->SetVisible(false);
         for (const auto& box : m_Boxes) box->SetVisible(false);
         for (const auto& gate : m_Gates) gate->SetVisible(false);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
@@ -201,7 +191,7 @@ void App::Visible() {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
 
-        for (const auto& hero : m_Heroes) hero->SetVisible(true);
+        m_Hero->SetVisible(true);
         for (const auto& box : m_Boxes) box->SetVisible(true);
         for (const auto& gate : m_Gates) gate->SetVisible(true);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(true);

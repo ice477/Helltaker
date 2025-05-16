@@ -1,14 +1,16 @@
+// include/game_item/Hero.cpp
 #include "Hero.h"
 #include "Util/Input.hpp"
+#include "spdlog/fmt/bundled/xchar.h"
+
 #include <cmath>
 
 constexpr int TILE_SIZE = 75;
-constexpr int OFFSET_X = -225;
+constexpr int OFFSET_X = -300;
 constexpr int OFFSET_Y = -275;
 
-Hero::Hero(std::vector<std::vector<int>>& mapData)
-    : m_MapData(mapData),
-      m_Animation(std::make_shared<Util::Animation>(
+Hero::Hero()
+    :m_Animation(std::make_shared<Util::Animation>(
           std::vector<std::string>{
               // DEFAULT
               "../assets/Texture2D/hero0022.png", "../assets/Texture2D/hero0023.png", "../assets/Texture2D/hero0024.png", "../assets/Texture2D/hero0025.png",
@@ -34,58 +36,51 @@ Hero::Hero(std::vector<std::vector<int>>& mapData)
     m_State = State::DEFAULT;
     // 初始化地圖座標
     m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-    m_PosY = static_cast<int>(m_MapData.size() - 1 - (m_Transform.translation.y - OFFSET_Y) / TILE_SIZE);
+    m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
+}
+
+void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
+    m_MapData = mapData;
+    m_Initialized = false;
 }
 
 void Hero::Update() {
-    // 取得目前地圖格座標
-    m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-    m_PosY = static_cast<int>(m_MapData.size() - 1 - (m_Transform.translation.y - OFFSET_Y) / TILE_SIZE);
-
+    fmt::print("m_PosX: {}, m_PosY: {},X:{},Y:{}\n", m_PosX, m_PosY, m_Transform.translation.x, m_Transform.translation.y);
+    if (!m_Initialized && !m_MapData.empty()) {
+        // 這裡做初始化座標等動作
+        m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
+        m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
+        m_Initialized = true;
+    }
     int nextX = m_PosX;
     int nextY = m_PosY;
 
     if (m_State != State::MOVE) {
         if (Util::Input::IsKeyDown(Util::Keycode::S)) {
-            nextY += 1;
+            m_PosY += 1;
             m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
             m_State = State::MOVE;
             m_Animation->SetFrameRange(12, 17);
         } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
-            nextY -= 1;
+            m_PosY -= 1;
             m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
             m_State = State::MOVE;
             m_Animation->SetFrameRange(12, 17);
         } else if (Util::Input::IsKeyDown(Util::Keycode::A)) {
-            nextX -= 1;
+            m_PosX -= 1;
             m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
             m_Transform.scale.x = -0.75f;
             m_State = State::MOVE;
             m_Animation->SetFrameRange(12, 17);
         } else if (Util::Input::IsKeyDown(Util::Keycode::D)) {
-            nextX += 1;
+            m_PosX += 1;
             m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
             m_Transform.scale.x = 0.75f;
             m_State = State::MOVE;
             m_Animation->SetFrameRange(12, 17);
         }
 
-        // 碰撞判斷
-        if (m_State == State::MOVE) {
-            // 檢查邊界
-            if (nextY < 0 || nextY >= static_cast<int>(m_MapData.size()) ||
-                nextX < 0 || nextX >= static_cast<int>(m_MapData[0].size()) ||
-                m_MapData[nextY][nextX] != 0) // 0: 可通行
-            {
-                // 不能移動，恢復狀態
-                m_State = State::DEFAULT;
-                m_Animation->SetFrameRange(0, 11);
-                return;
-            }
-            // 更新地圖資料
-            m_MapData[m_PosY][m_PosX] = 0;      // 原位置設為空
-            m_MapData[nextY][nextX] = 2;        // 目標位置設為 Hero
-        }
+
     }
 
     // 平滑移動
