@@ -52,7 +52,7 @@ private:
 
     std::shared_ptr<StageBG> m_StageBG = std::make_shared<StageBG>();
 
-    std::vector<std::shared_ptr<Hero>> m_Heroes;
+    std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
     std::vector<std::shared_ptr<Gate>> m_Gates;
