@@ -84,7 +84,7 @@ void App::Push_Box() {
         if (mapManager.LoadMap("../assets/maps/test_map.txt")) {
             LOG_INFO("Map loaded successfully for level {}", currentLevel);
 
-            const auto& mapData = mapManager.GetMapData();
+            auto& mapData = mapManager.GetMapDataMutable();
             constexpr int tilesize = 75;
             constexpr int offsetX = -225;
             constexpr int offsetY = -275;
@@ -97,7 +97,7 @@ void App::Push_Box() {
 
                     switch (tile) {
                     case 2: { // Hero
-                        auto hero = std::make_shared<Hero>();
+                        auto hero = std::make_shared<Hero>(mapData);
                         hero->m_Transform.translation = {worldX, worldY};
                         hero->SetVisible(true);
                         m_Heroes.push_back(hero);

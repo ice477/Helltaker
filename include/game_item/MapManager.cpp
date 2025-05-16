@@ -20,8 +20,6 @@ bool MapManager::LoadMap(const std::string& filePath) {
     return true;
 }
 
-
-
-const std::vector<std::vector<int>>& MapManager::GetMapData() const {
+std::vector<std::vector<int>>& MapManager::GetMapDataMutable() {
     return m_MapData;
 }
