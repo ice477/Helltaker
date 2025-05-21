@@ -45,11 +45,12 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
 }
 
 void Hero::Update() {
-    fmt::print("m_PosX: {}, m_PosY: {},X:{},Y:{}\n", m_PosX, m_PosY, m_Transform.translation.x, m_Transform.translation.y);
+    fmt::print("m_PosX: {}, m_PosY: {},next_step_state: {}\n", m_PosX, m_PosY,m_MapData[m_PosY][m_PosX]);
     if (!m_Initialized && !m_MapData.empty()) {
         // 這裡做初始化座標等動作
         m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
         m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
+        m_MapData[m_PosY][m_PosX] = 0;
         m_Initialized = true;
     }
     int nextX = m_PosX;
@@ -58,26 +59,42 @@ void Hero::Update() {
     if (m_State != State::MOVE) {
         if (Util::Input::IsKeyDown(Util::Keycode::S)) {
             m_PosY += 1;
-            m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
-            m_State = State::MOVE;
-            m_Animation->SetFrameRange(12, 17);
+            if (m_MapData[m_PosY][m_PosX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            } else {
+                m_PosY -= 1;
+            }
         } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
             m_PosY -= 1;
-            m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
-            m_State = State::MOVE;
-            m_Animation->SetFrameRange(12, 17);
+            if (m_MapData[m_PosY][m_PosX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            } else {
+                m_PosY += 1;
+            }
         } else if (Util::Input::IsKeyDown(Util::Keycode::A)) {
             m_PosX -= 1;
-            m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
-            m_Transform.scale.x = -0.75f;
-            m_State = State::MOVE;
-            m_Animation->SetFrameRange(12, 17);
+            if (m_MapData[m_PosY][m_PosX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
+                m_Transform.scale.x = -0.75f;
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            } else {
+                m_PosX += 1;
+            }
         } else if (Util::Input::IsKeyDown(Util::Keycode::D)) {
             m_PosX += 1;
-            m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
-            m_Transform.scale.x = 0.75f;
-            m_State = State::MOVE;
-            m_Animation->SetFrameRange(12, 17);
+            if (m_MapData[m_PosY][m_PosX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
+                m_Transform.scale.x = 0.75f;
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            } else {
+                m_PosX -= 1;
+            }
         }
 
 
