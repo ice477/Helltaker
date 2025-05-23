@@ -19,7 +19,7 @@ public:
 
     void SetMapData(const std::vector<std::vector<int>>& mapData); // 新增
 
-    void Update();
+    void Update(std::vector<std::vector<int>>& m_MapData);
 
 private:
     int m_PosX;

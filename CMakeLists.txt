@@ -128,6 +128,8 @@ set(EXAMPLE_FILES
         include/game_item/Key.h
         include/dialogue_item/Trans.cpp
         include/dialogue_item/Trans.h
+        include/game_item/Trap.cpp
+        include/game_item/Trap.h
 )
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(TEST_FILES

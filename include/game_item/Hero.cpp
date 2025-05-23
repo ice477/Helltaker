@@ -44,7 +44,7 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
     m_Initialized = false;
 }
 
-void Hero::Update() {
+void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
     fmt::print("m_PosX: {}, m_PosY: {},next_step_state: {}\n", m_PosX, m_PosY,m_MapData[m_PosY][m_PosX]);
     if (!m_Initialized && !m_MapData.empty()) {
         // 這裡做初始化座標等動作
@@ -58,14 +58,51 @@ void Hero::Update() {
 
     if (m_State != State::MOVE) {
         if (Util::Input::IsKeyDown(Util::Keycode::S)) {
-            m_PosY += 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
+            nextY += 1;
+            if (m_MapData[nextY][m_PosX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_PosY = nextY;
+                m_Animation->SetFrameRange(12, 17);
+            }
+            else if (m_MapData[nextY][m_PosX] == 3) {
+                int boxNextY = nextY + 1;
+                // 檢查箱子前方一格是否為空地
+                if (m_MapData[boxNextY][m_PosX] == 0) {
+                    // 推動箱子
+                    m_MapData[boxNextY][m_PosX] = 3;
+                    m_MapData[nextY][m_PosX] = 0;
+                }
+            }/*
+            else if (m_MapData[m_PosY][m_PosX] == 4) {
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
                 m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosY -= 1;
             }
+            else if (m_MapData[m_PosY][m_PosX] == 5) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            }
+            else if (m_MapData[m_PosY][m_PosX] == 6) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            }
+            else if (m_MapData[m_PosY][m_PosX] == 7) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            }
+            else if (m_MapData[m_PosY][m_PosX] == 8) {
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                m_State = State::MOVE;
+                m_Animation->SetFrameRange(12, 17);
+            }*/
+            else {
+                nextY -= 1;
+            }
+
         } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
             m_PosY -= 1;
             if (m_MapData[m_PosY][m_PosX] == 0) {
