@@ -18,17 +18,10 @@ public:
     };
 
     bool LoadMap(const std::string& filePath);
-    bool CanMove(int x, int y) const;
-    void PushBox(int x, int y, int newX, int newY);
-
-
-
-    std::pair<int,int> GetPlayerInitialPosition() const;
-    const std::vector<std::vector<int>>& GetMapData() const;
+    std::vector<std::vector<int>>& GetMapDataMutable();
 
 private:
     std::vector<std::vector<int>> m_MapData;
-
 };
 
 #endif // MAPMANAGER_H

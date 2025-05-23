@@ -24,6 +24,7 @@ StageBG::StageBG()
 }
 
 
-void StageBG::Update() {
+void StageBG::Update(int level) {
+    m_BackgroundAnimation->SetCurrentFrame(level);
 
 }

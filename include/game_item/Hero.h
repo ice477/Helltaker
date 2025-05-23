@@ -17,15 +17,16 @@ public:
 
     State m_State = State::DEFAULT;
 
-    void Update();
-    void Moving(bool walkable);
-    void Initialize(MapManager& mapMgr);
-    void Move(int dx, int dy, MapManager& mapMgr);
+    void SetMapData(const std::vector<std::vector<int>>& mapData); // 新增
 
+    void Update();
 
 private:
-    int m_PosX;  // 新增的成員變數
+    int m_PosX;
     int m_PosY;
+
+    bool m_Initialized = false;
+    std::vector<std::vector<int>> m_MapData;
 
     std::shared_ptr<Util::Animation> m_Animation;
 
@@ -34,6 +35,6 @@ private:
         float y;
     };
     Position m_TargetPosition;
-
 };
+
 #endif // HERO_H
