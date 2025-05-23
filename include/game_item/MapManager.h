@@ -15,9 +15,10 @@ public:
         Gate = 5,
         Key = 6,
         Target = 7,
+        Trap = 8,
     };
 
-    bool LoadMap(const std::string& filePath);
+    bool LoadMap(int level);
     std::vector<std::vector<int>>& GetMapDataMutable();
 
 private:

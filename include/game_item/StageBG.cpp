@@ -25,6 +25,6 @@ StageBG::StageBG()
 
 
 void StageBG::Update(int level) {
-    m_BackgroundAnimation->SetCurrentFrame(level);
+    m_BackgroundAnimation->SetCurrentFrame(level-1);
 
 }
