@@ -5,6 +5,7 @@
 #include "../Util/Animation.hpp"
 #include "../pch.hpp"
 
+// Box.h
 class Box : public Util::GameObject {
 public:
     enum class State {
@@ -13,13 +14,13 @@ public:
     };
     State m_State = State::DEFAULT;
 
+    Box(int index = 0);
+    virtual ~Box() = default;
+    virtual void Update(std::vector<std::vector<int>>& m_MapData); // virtual
 
-    Box();
-    void Update(std::vector<std::vector<int>>& m_MapData); // 更新邏輯
-
-private:
-    std::shared_ptr<Util::Animation> m_Animation; // 動畫屬性
-
+protected:
+    int m_Index;
+    std::shared_ptr<Util::Animation> m_Animation;
     struct Position {
         float x;
         float y;

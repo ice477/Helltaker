@@ -73,20 +73,33 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
                     m_MapData[boxNextY][m_PosX] = 3;
                     m_MapData[nextY][m_PosX] = 0;
                 }
-            }/*
-            else if (m_MapData[m_PosY][m_PosX] == 4) {
-                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
             }
-            else if (m_MapData[m_PosY][m_PosX] == 5) {
-                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
+            else if (m_MapData[nextY][m_PosX] == 4) { // 推 enemy
+                int enemyNextY = nextY + 1;
+                if (m_MapData[enemyNextY][m_PosX] == 0) {
+                    // 推動 enemy
+                    m_MapData[enemyNextY][m_PosX] = 4;
+                    m_MapData[nextY][m_PosX] = 0;
+                } else {
+                    // enemy 被消除
+                    m_MapData[nextY][m_PosX] = 0;
+                }
             }
-            else if (m_MapData[m_PosY][m_PosX] == 6) {
+            else if (m_MapData[nextY][m_PosX] == 5) {
+                if (m_HasKey) {
+                    m_MapData[nextY][m_PosX] = 0; // gate消失
+                    m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
+                    m_State = State::MOVE;
+                    m_PosY = nextY;
+                    m_Animation->SetFrameRange(12, 17);
+                }
+            }
+            if (m_MapData[nextY][m_PosX] == 6) { // Key
+                m_HasKey = true; // 拿到鑰匙
+                m_MapData[nextY][m_PosX] = 0; // 鑰匙消失
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
+                m_PosY = nextY;
                 m_Animation->SetFrameRange(12, 17);
             }
             else if (m_MapData[m_PosY][m_PosX] == 7) {
@@ -98,43 +111,130 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
                 m_Animation->SetFrameRange(12, 17);
-            }*/
+            }
             else {
                 nextY -= 1;
             }
-
-        } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
-            m_PosY -= 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
+        }
+        if (Util::Input::IsKeyDown(Util::Keycode::W)) {
+            int nextY = m_PosY - 1;
+            if (m_MapData[nextY][m_PosX] == 0) {
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
                 m_State = State::MOVE;
+                m_PosY = nextY;
                 m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosY += 1;
+            } else if (m_MapData[nextY][m_PosX] == 3) {
+                int boxNextY = nextY - 1;
+                if (m_MapData[boxNextY][m_PosX] == 0) {
+                    m_MapData[boxNextY][m_PosX] = 3;
+                    m_MapData[nextY][m_PosX] = 0;
+                }
+            } else if (m_MapData[nextY][m_PosX] == 4) {
+                int enemyNextY = nextY - 1;
+                if (m_MapData[enemyNextY][m_PosX] == 0) {
+                    m_MapData[enemyNextY][m_PosX] = 4;
+                    m_MapData[nextY][m_PosX] = 0;
+                } else {
+                    m_MapData[nextY][m_PosX] = 0;
+                }
+            } else if (m_MapData[nextY][m_PosX] == 5) {
+                if (m_HasKey) {
+                    m_MapData[nextY][m_PosX] = 0;
+                    m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
+                    m_State = State::MOVE;
+                    m_PosY = nextY;
+                    m_Animation->SetFrameRange(12, 17);
+                }
             }
-        } else if (Util::Input::IsKeyDown(Util::Keycode::A)) {
-            m_PosX -= 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
-                m_Transform.scale.x = -0.75f;
+            if (m_MapData[nextY][m_PosX] == 6) {
+                m_HasKey = true;
+                m_MapData[nextY][m_PosX] = 0;
+                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
                 m_State = State::MOVE;
+                m_PosY = nextY;
                 m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosX += 1;
-            }
-        } else if (Util::Input::IsKeyDown(Util::Keycode::D)) {
-            m_PosX += 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
-                m_Transform.scale.x = 0.75f;
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosX -= 1;
             }
         }
-
-
+        // A: 向左
+        if (Util::Input::IsKeyDown(Util::Keycode::A)) {
+            int nextX = m_PosX - 1;
+            if (m_MapData[m_PosY][nextX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
+                m_State = State::MOVE;
+                m_PosX = nextX;
+                m_Animation->SetFrameRange(12, 17);
+            } else if (m_MapData[m_PosY][nextX] == 3) {
+                int boxNextX = nextX - 1;
+                if (m_MapData[m_PosY][boxNextX] == 0) {
+                    m_MapData[m_PosY][boxNextX] = 3;
+                    m_MapData[m_PosY][nextX] = 0;
+                }
+            } else if (m_MapData[m_PosY][nextX] == 4) {
+                int enemyNextX = nextX - 1;
+                if (m_MapData[m_PosY][enemyNextX] == 0) {
+                    m_MapData[m_PosY][enemyNextX] = 4;
+                    m_MapData[m_PosY][nextX] = 0;
+                } else {
+                    m_MapData[m_PosY][nextX] = 0;
+                }
+            } else if (m_MapData[m_PosY][nextX] == 5) {
+                if (m_HasKey) {
+                    m_MapData[m_PosY][nextX] = 0;
+                    m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
+                    m_State = State::MOVE;
+                    m_PosX = nextX;
+                    m_Animation->SetFrameRange(12, 17);
+                }
+            }
+            if (m_MapData[m_PosY][nextX] == 6) {
+                m_HasKey = true;
+                m_MapData[m_PosY][nextX] = 0;
+                m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
+                m_State = State::MOVE;
+                m_PosX = nextX;
+                m_Animation->SetFrameRange(12, 17);
+            }
+        }
+        // D: 向右
+        if (Util::Input::IsKeyDown(Util::Keycode::D)) {
+            int nextX = m_PosX + 1;
+            if (m_MapData[m_PosY][nextX] == 0) {
+                m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
+                m_State = State::MOVE;
+                m_PosX = nextX;
+                m_Animation->SetFrameRange(12, 17);
+            } else if (m_MapData[m_PosY][nextX] == 3) {
+                int boxNextX = nextX + 1;
+                if (m_MapData[m_PosY][boxNextX] == 0) {
+                    m_MapData[m_PosY][boxNextX] = 3;
+                    m_MapData[m_PosY][nextX] = 0;
+                }
+            } else if (m_MapData[m_PosY][nextX] == 4) {
+                int enemyNextX = nextX + 1;
+                if (m_MapData[m_PosY][enemyNextX] == 0) {
+                    m_MapData[m_PosY][enemyNextX] = 4;
+                    m_MapData[m_PosY][nextX] = 0;
+                } else {
+                    m_MapData[m_PosY][nextX] = 0;
+                }
+            } else if (m_MapData[m_PosY][nextX] == 5) {
+                if (m_HasKey) {
+                    m_MapData[m_PosY][nextX] = 0;
+                    m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
+                    m_State = State::MOVE;
+                    m_PosX = nextX;
+                    m_Animation->SetFrameRange(12, 17);
+                }
+            }
+            if (m_MapData[m_PosY][nextX] == 6) {
+                m_HasKey = true;
+                m_MapData[m_PosY][nextX] = 0;
+                m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
+                m_State = State::MOVE;
+                m_PosX = nextX;
+                m_Animation->SetFrameRange(12, 17);
+            }
+        }
     }
 
     // 平滑移動

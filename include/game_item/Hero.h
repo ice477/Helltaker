@@ -21,7 +21,11 @@ public:
 
     void Update(std::vector<std::vector<int>>& m_MapData);
 
+    void SetHasKey(bool hasKey) { m_HasKey = hasKey; }
+
 private:
+    bool m_HasKey = false;
+
     int m_PosX;
     int m_PosY;
 

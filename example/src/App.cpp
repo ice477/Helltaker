@@ -80,6 +80,10 @@ void App::Push_Box() {
             constexpr int offsetX = -300;
             constexpr int offsetY = -275;
 
+            int boxIndex = 0;
+            int enemyIndex = 0;
+            int gateIndex = 0;
+
             for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
                 for (int x = 0; x < static_cast<int>(m_MapData[y].size()); x++) {
                     int tile = m_MapData[y][x];
@@ -99,23 +103,21 @@ void App::Push_Box() {
                         break;
                     }
                     case 3: { // Box
-                        auto box = std::make_shared<Box>();
+                        auto box = std::make_shared<Box>(boxIndex++);
                         box->m_Transform.translation = {worldX, worldY};
                         box->SetVisible(true);
                         m_Boxes.push_back(box);
-                        LOG_DEBUG("Box placed at ({}, {})", worldX, worldY);
                         break;
                     }
                     case 4: { // Enemy
-                        auto enemy = std::make_shared<Enemy>();
+                        auto enemy = std::make_shared<Enemy>(enemyIndex++);
                         enemy->m_Transform.translation = {worldX, worldY};
                         enemy->SetVisible(true);
                         m_Enemies.push_back(enemy);
-                        LOG_DEBUG("Enemy placed at ({}, {})", worldX, worldY);
                         break;
                     }
                     case 5: { // Gate
-                        auto gate = std::make_shared<Gate>();
+                        auto gate = std::make_shared<Gate>(gateIndex++);
                         gate->m_Transform.translation = {worldX, worldY};
                         gate->SetVisible(true);
                         m_Gates.push_back(gate);
@@ -173,9 +175,9 @@ void App::Push_Box() {
 
     m_Hero->Update(m_MapData);
     for (const auto& box : m_Boxes) box->Update(m_MapData);
-    for (const auto& enemy : m_Enemies) enemy->Update();
-    for (const auto& gate : m_Gates) gate->Update();
-    for (const auto& key : m_Keys) key->Update();
+    for (const auto& enemy : m_Enemies) enemy->Update(m_MapData);
+    for (const auto& gate : m_Gates) gate->Update(m_MapData);
+    for (const auto& key : m_Keys) key->Update(m_MapData);
     m_Root.Update();
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
