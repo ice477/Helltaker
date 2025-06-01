@@ -10,7 +10,7 @@
 class Key : public Box {
 public:
     Key();
-    void Update();
+    void Update(std::vector<std::vector<int>>& m_MapData);
 private:
     std::shared_ptr<Util::Animation> m_Animation;
 
