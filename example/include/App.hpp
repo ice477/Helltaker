@@ -67,6 +67,8 @@ private:
 
     bool showDemoWindow = true;
 
+    int isReload = false;
+
     int currentLevel = 1;
 
     MapManager m_MapManager;

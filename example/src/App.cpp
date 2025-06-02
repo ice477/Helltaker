@@ -40,7 +40,6 @@ void App::Start() {
 }
 
 void App::Update() {
-
     Visible();
     m_Character->Update();
     m_Character->SetVisible(true);
@@ -89,8 +88,6 @@ void App::Push_Box() {
                     int tile = m_MapData[y][x];
                     int worldX = offsetX + x * tilesize; // X 軸保持不變
                     int worldY = offsetY + (m_MapData.size() - 1 - y) * tilesize; // Y 軸翻轉
-                    fmt::print("worldX: {}, worldY: {}, mapdata_size: {}\n", worldX, worldY, m_MapData.size());
-
                     switch (tile) {
                     case 2: { // Hero
                         if (!m_Hero) {
@@ -190,6 +187,7 @@ void App::Push_Box() {
     if (Util::Input::IsKeyDown(Util::Keycode::R)) {
         LOG_DEBUG("R Pressed. Reloading current level.");
         isMapLoaded = false;
+
     }
 }
 
