@@ -6,8 +6,7 @@
 #include <cmath>
 
 constexpr int TILE_SIZE = 75;
-constexpr int OFFSET_X = -300;
-constexpr int OFFSET_Y = -275;
+
 
 Hero::Hero()
     :m_Animation(std::make_shared<Util::Animation>(
@@ -35,8 +34,8 @@ Hero::Hero()
     SetZIndex(7);
     m_State = State::DEFAULT;
     // 初始化地圖座標
-    m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-    m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
+    m_PosX = static_cast<int>((m_Transform.translation.x) / TILE_SIZE)+2;
+    m_PosY = static_cast<int>((m_Transform.translation.y) / TILE_SIZE)+2;
 }
 
 void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
@@ -47,9 +46,6 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
 void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
     fmt::print("m_PosX: {}, m_PosY: {},next_step_state: {}\n", m_PosX, m_PosY,m_MapData[m_PosY][m_PosX]);
     if (!m_Initialized && !m_MapData.empty()) {
-        // 這裡做初始化座標等動作
-        m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-        m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
         m_MapData[m_PosY][m_PosX] = 0;
         m_Initialized = true;
     }
@@ -65,7 +61,7 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
                 m_PosY = nextY;
                 m_Animation->SetFrameRange(12, 17);
             }
-            else if (m_MapData[nextY][m_PosX] == 3) {
+            else if (m_MapData[nextY][m_PosX] == 3) {//box
                 int boxNextY = nextY + 1;
                 // 檢查箱子前方一格是否為空地
                 if (m_MapData[boxNextY][m_PosX] == 0) {
@@ -74,7 +70,7 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
                     m_MapData[nextY][m_PosX] = 0;
                 }
             }
-            else if (m_MapData[nextY][m_PosX] == 4) { // 推 enemy
+            else if (m_MapData[nextY][m_PosX] == 4) { // enemy
                 int enemyNextY = nextY + 1;
                 if (m_MapData[enemyNextY][m_PosX] == 0) {
                     // 推動 enemy
@@ -85,9 +81,9 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
                     m_MapData[nextY][m_PosX] = 0;
                 }
             }
-            else if (m_MapData[nextY][m_PosX] == 5) {
+            else if (m_MapData[nextY][m_PosX] == 5) {//gate
                 if (m_HasKey) {
-                    m_MapData[nextY][m_PosX] = 0; // gate消失
+                    m_MapData[nextY][m_PosX] = 0;
                     m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                     m_State = State::MOVE;
                     m_PosY = nextY;
@@ -96,18 +92,18 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
             }
             if (m_MapData[nextY][m_PosX] == 6) { // Key
                 m_HasKey = true; // 拿到鑰匙
-                m_MapData[nextY][m_PosX] = 0; // 鑰匙消失
+                m_MapData[nextY][m_PosX] = 0;
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
                 m_PosY = nextY;
                 m_Animation->SetFrameRange(12, 17);
             }
-            else if (m_MapData[m_PosY][m_PosX] == 7) {
+            else if (m_MapData[m_PosY][m_PosX] == 7) {// Target
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
                 m_Animation->SetFrameRange(12, 17);
             }
-            else if (m_MapData[m_PosY][m_PosX] == 8) {
+            else if (m_MapData[m_PosY][m_PosX] == 8) {//trap
                 m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
                 m_State = State::MOVE;
                 m_Animation->SetFrameRange(12, 17);
@@ -157,6 +153,7 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
         }
         // A: 向左
         if (Util::Input::IsKeyDown(Util::Keycode::A)) {
+            m_Transform.scale = {-0.75f, 0.75f};
             int nextX = m_PosX - 1;
             if (m_MapData[m_PosY][nextX] == 0) {
                 m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
@@ -197,6 +194,7 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
         }
         // D: 向右
         if (Util::Input::IsKeyDown(Util::Keycode::D)) {
+            m_Transform.scale = {0.75f, 0.75f};
             int nextX = m_PosX + 1;
             if (m_MapData[m_PosY][nextX] == 0) {
                 m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
