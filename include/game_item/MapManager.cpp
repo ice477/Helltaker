@@ -2,7 +2,8 @@
 #include <fstream>
 #include <sstream>
 
-bool MapManager::LoadMap(const std::string& filePath) {
+bool MapManager::LoadMap(int level) {
+    std::string filePath = "../assets/maps/test_map" + std::to_string(level) + ".txt";
     std::ifstream file(filePath);
     if(!file.is_open()) return false;
 

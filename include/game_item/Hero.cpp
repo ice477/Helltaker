@@ -6,8 +6,9 @@
 #include <cmath>
 
 constexpr int TILE_SIZE = 75;
-constexpr int OFFSET_X = -300;
-constexpr int OFFSET_Y = -275;
+constexpr int offsetX = -300;
+constexpr int offsetY = -275;
+
 
 Hero::Hero()
     :m_Animation(std::make_shared<Util::Animation>(
@@ -35,69 +36,45 @@ Hero::Hero()
     SetZIndex(7);
     m_State = State::DEFAULT;
     // 初始化地圖座標
-    m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-    m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
+    m_PosX = static_cast<int>((m_Transform.translation.x - offsetX) / TILE_SIZE);
+    m_PosY = static_cast<int>(m_MapData.size() - 1 - ((m_Transform.translation.y - offsetY) / TILE_SIZE));
 }
-
-void Hero::SetMapData(const std::vector<std::vector<int>>& mapData) {
+void Hero::SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX, int offsetY) {
     m_MapData = mapData;
-    m_Initialized = false;
+    int mapHeight = static_cast<int>(m_MapData.size());
+    for (int y = 0; y < mapHeight; ++y) {
+        for (int x = 0; x < static_cast<int>(m_MapData[y].size()); ++x) {
+            if (m_MapData[y][x] == 2) {
+                m_PosX = x;
+                m_PosY = y;
+                m_Transform.translation.x = offsetX + x * TILE_SIZE;
+                m_Transform.translation.y = offsetY + (mapHeight - 1 - y) * TILE_SIZE;
+                m_OffsetX = offsetX;
+                m_OffsetY = offsetY;
+                m_Initialized = false;
+                return;
+            }
+        }
+    }
 }
 
-void Hero::Update() {
-    fmt::print("m_PosX: {}, m_PosY: {},next_step_state: {}\n", m_PosX, m_PosY,m_MapData[m_PosY][m_PosX]);
+void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
     if (!m_Initialized && !m_MapData.empty()) {
-        // 這裡做初始化座標等動作
-        m_PosX = static_cast<int>((m_Transform.translation.x - OFFSET_X) / TILE_SIZE);
-        m_PosY = static_cast<int>((m_Transform.translation.y - OFFSET_Y) / TILE_SIZE) - 3;
         m_MapData[m_PosY][m_PosX] = 0;
         m_Initialized = true;
     }
-    int nextX = m_PosX;
-    int nextY = m_PosY;
 
     if (m_State != State::MOVE) {
-        if (Util::Input::IsKeyDown(Util::Keycode::S)) {
-            m_PosY += 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y - TILE_SIZE};
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosY -= 1;
-            }
-        } else if (Util::Input::IsKeyDown(Util::Keycode::W)) {
-            m_PosY -= 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x, m_Transform.translation.y + TILE_SIZE};
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosY += 1;
-            }
-        } else if (Util::Input::IsKeyDown(Util::Keycode::A)) {
-            m_PosX -= 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x - TILE_SIZE, m_Transform.translation.y};
-                m_Transform.scale.x = -0.75f;
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosX += 1;
-            }
-        } else if (Util::Input::IsKeyDown(Util::Keycode::D)) {
-            m_PosX += 1;
-            if (m_MapData[m_PosY][m_PosX] == 0) {
-                m_TargetPosition = {m_Transform.translation.x + TILE_SIZE, m_Transform.translation.y};
-                m_Transform.scale.x = 0.75f;
-                m_State = State::MOVE;
-                m_Animation->SetFrameRange(12, 17);
-            } else {
-                m_PosX -= 1;
-            }
+        if (Util::Input::IsKeyDown(Util::Keycode::W)) TryMove(0, -1, m_MapData);
+        if (Util::Input::IsKeyDown(Util::Keycode::S)) TryMove(0, 1, m_MapData);
+        if (Util::Input::IsKeyDown(Util::Keycode::A)) {
+            m_Transform.scale = {-0.75f, 0.75f};
+            TryMove(-1, 0, m_MapData);
         }
-
-
+        if (Util::Input::IsKeyDown(Util::Keycode::D)) {
+            m_Transform.scale = {0.75f, 0.75f};
+            TryMove(1, 0, m_MapData);
+        }
     }
 
     // 平滑移動
@@ -122,5 +99,75 @@ void Hero::Update() {
             m_State = State::DEFAULT;
             m_Animation->SetFrameRange(0, 11);
         }
+    }
+}
+
+void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
+    int nextX = m_PosX + dx;
+    int nextY = m_PosY + dy;
+    if (nextY < 0 || nextY >= (int)map.size() || nextX < 0 || nextX >= (int)map[0].size())
+        return;
+
+    int target = map[nextY][nextX];
+    // 空地
+    if (target == 0) {
+        m_TargetPosition = {m_Transform.translation.x + dx * TILE_SIZE, m_Transform.translation.y - dy * TILE_SIZE};
+        m_State = State::MOVE;
+        m_PosX = nextX;
+        m_PosY = nextY;
+        m_Animation->SetFrameRange(12, 17);
+        return;
+    }
+    // 箱子
+    if (target == 3) {
+        int boxNextX = nextX + dx;
+        int boxNextY = nextY + dy;
+        if (boxNextY >= 0 && boxNextY < (int)map.size() && boxNextX >= 0 && boxNextX < (int)map[0].size() && map[boxNextY][boxNextX] == 0) {
+            map[boxNextY][boxNextX] = 3;
+            map[nextY][nextX] = 0;
+        }
+        return;
+    }
+    // 敵人
+    if (target == 4) {
+        int enemyNextX = nextX + dx;
+        int enemyNextY = nextY + dy;
+        if (enemyNextY >= 0 && enemyNextY < (int)map.size() && enemyNextX >= 0 && enemyNextX < (int)map[0].size() && map[enemyNextY][enemyNextX] == 0) {
+            map[enemyNextY][enemyNextX] = 4;
+            map[nextY][nextX] = 0;
+        } else {
+            map[nextY][nextX] = 0;
+        }
+        return;
+    }
+    // 門
+    if (target == 5 && m_HasKey) {
+        map[nextY][nextX] = 0;
+        m_TargetPosition = {m_Transform.translation.x + dx * TILE_SIZE, m_Transform.translation.y - dy * TILE_SIZE};
+        m_State = State::MOVE;
+        m_PosX = nextX;
+        m_PosY = nextY;
+        m_Animation->SetFrameRange(12, 17);
+        return;
+    }
+    // 鑰匙
+    if (target == 6) {
+        m_HasKey = true;
+        map[nextY][nextX] = 0;
+        m_TargetPosition = {m_Transform.translation.x + dx * TILE_SIZE, m_Transform.translation.y - dy * TILE_SIZE};
+        m_State = State::MOVE;
+        m_PosX = nextX;
+        m_PosY = nextY;
+        m_Animation->SetFrameRange(12, 17);
+        return;
+    }
+    // 目標、陷阱
+    if (target == 7 || target == 8) {
+        m_TargetPosition = {m_Transform.translation.x + dx * TILE_SIZE, m_Transform.translation.y - dy * TILE_SIZE};
+        m_State = State::MOVE;
+        m_PosX = nextX;
+        m_PosY = nextY;
+        m_Animation->SetFrameRange(12, 17);
+        return;
     }
 }

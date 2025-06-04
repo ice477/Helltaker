@@ -10,13 +10,13 @@
 #include "GiraffeText.hpp"
 #include "dialogue_item/Trans.h"
 #include "dialogue_item/Character.h"
-#include "dialogue_item/DialogueBG.h"
 #include "game_item/Box.h"
 #include "game_item/Hero.h"
 #include "game_item/StageBG.h"
 #include "game_item/Gate.h"
 #include "game_item/Enemy.h"
 #include "game_item/Key.h"
+#include "game_item/Trap.h"
 #include "game_item/Decorate.hpp"
 
 class App {
@@ -29,7 +29,7 @@ public:
         END,
     };
 
-    State GetCurrentState() const {return m_CurrentState; }
+    State GetCurrentState() const { return m_CurrentState; }
     State m_NextState = State::START;
     bool m_IsTransitioning = false;
 
@@ -39,6 +39,13 @@ public:
     void End();
 
     void Visible();
+    void CleaObjects();
+    void SetOffset(int currentLevel);
+
+    int m_OffsetX = -300;
+    int m_OffsetY = -275;
+
+    std::vector<std::vector<int>> m_MapData;
 
 private:
     State m_CurrentState = State::START;
@@ -53,6 +60,7 @@ private:
     std::shared_ptr<Character> m_Character = std::make_shared<Character>();
 
     std::shared_ptr<StageBG> m_StageBG = std::make_shared<StageBG>();
+  
     std::shared_ptr<DialogueBG> m_DialogueBG = std::make_shared<DialogueBG>();
     std::shared_ptr<Decorate> m_Decorate = std::make_shared<Decorate>();
 
@@ -61,16 +69,18 @@ private:
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
     std::vector<std::shared_ptr<Gate>> m_Gates;
     std::vector<std::shared_ptr<Key>> m_Keys;
-    std::vector<std::shared_ptr<Decorate>> m_Decs;
+    std::vector<std::shared_ptr<Trap>> m_Traps;
 
     Util::Renderer m_Root;
 
     bool showDemoWindow = true;
 
-    int currentLevel = 0;
-    int previousLevel = 0;
+    int isReload = false;
+
+    int currentLevel = 1;
 
     MapManager m_MapManager;
-};
 
+
+};
 #endif
