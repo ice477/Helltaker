@@ -24,10 +24,10 @@ public:
     int m_OffsetX;
     int m_OffsetY;
 
+
 protected:
     int m_Index;
     std::shared_ptr<Util::Animation> m_Animation;
-
 
     struct Position {
         float x;

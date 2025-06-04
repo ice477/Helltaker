@@ -6,8 +6,7 @@
 #include <cmath>
 
 constexpr int TILE_SIZE = 75;
-constexpr int offsetX = -300;
-constexpr int offsetY = -275;
+
 
 
 Hero::Hero()
@@ -36,8 +35,10 @@ Hero::Hero()
     SetZIndex(7);
     m_State = State::DEFAULT;
     // 初始化地圖座標
+
     m_PosX = static_cast<int>((m_Transform.translation.x - offsetX) / TILE_SIZE);
     m_PosY = static_cast<int>(m_MapData.size() - 1 - ((m_Transform.translation.y - offsetY) / TILE_SIZE));
+
 }
 void Hero::SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX, int offsetY) {
     m_MapData = mapData;
@@ -59,6 +60,7 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX,
 }
 
 void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
+
     if (!m_Initialized && !m_MapData.empty()) {
         m_MapData[m_PosY][m_PosX] = 0;
         m_Initialized = true;

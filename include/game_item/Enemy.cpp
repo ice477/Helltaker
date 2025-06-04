@@ -2,6 +2,7 @@
 
 constexpr int TILE_SIZE = 75;
 
+
 Enemy::Enemy(int index) : Box(index) {
     m_Animation = std::make_shared<Util::Animation>(
         std::vector<std::string>{
@@ -25,6 +26,7 @@ void Enemy::Update(std::vector<std::vector<int>>& m_MapData) {
                     m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
                     m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE;
                     SetVisible(true);
+
                     return;
                 }
                 ++count;

@@ -60,7 +60,7 @@ void App::Push_Box() {
     if (!isMapLoaded) {
         CleaObjects();
         LOG_DEBUG("Initializing map for PUSH_BOX scene.");
-
+        CleaObjects();
         // 清除當前關卡的物件
         m_Hero.reset();
         m_Boxes.clear();
@@ -73,6 +73,7 @@ void App::Push_Box() {
         MapManager mapManager;
         if (mapManager.LoadMap(currentLevel)) {
             m_MapData.clear();
+          
             m_MapData = mapManager.GetMapDataMutable();
             constexpr int tilesize = 75;
 
@@ -100,6 +101,7 @@ void App::Push_Box() {
                     int tile = m_MapData[y][x];
                     int worldX = m_OffsetX + x * tilesize;
                     int worldY = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * tilesize;
+                  
                     switch (tile) {
                     case 2:
                         if (!m_Hero) {
@@ -227,11 +229,13 @@ void App::CleaObjects() {
     {
         m_Root.RemoveChild(m_Hero);
         }
+
     for (const auto& box : m_Boxes) m_Root.RemoveChild(box);
     for (const auto& enemy : m_Enemies) m_Root.RemoveChild(enemy);
     for (const auto& gate : m_Gates) m_Root.RemoveChild(gate);
     for (const auto& key : m_Keys) m_Root.RemoveChild(key);
     for (const auto& trap : m_Traps) m_Root.RemoveChild(trap);
+
     m_Hero.reset();
     m_Boxes.clear();
     m_Enemies.clear();

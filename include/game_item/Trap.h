@@ -1,4 +1,3 @@
-// Trap.h
 #ifndef TRAP_H
 #define TRAP_H
 #include "Box.h"

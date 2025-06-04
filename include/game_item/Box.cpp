@@ -2,7 +2,6 @@
 
 constexpr int TILE_SIZE = 75;
 
-
 Box::Box(int index) : m_Index(index) {
     m_Animation = std::make_shared<Util::Animation>(
         std::vector<std::string>{"../assets/Texture2D/boxExport0001.png", "../assets/Texture2D/boxExport0002.png", "../assets/Texture2D/boxExport0003.png",
@@ -25,6 +24,7 @@ void Box::Update(std::vector<std::vector<int>>& m_MapData) {
                     m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
                     m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE;
                     SetVisible(true);
+
                     return;
                 }
                 ++count;

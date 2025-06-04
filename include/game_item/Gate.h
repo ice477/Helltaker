@@ -15,6 +15,7 @@ public:
     int m_OffsetX;
     int m_OffsetY;
 
+
 private:
     std::shared_ptr<Util::Animation> m_Animation; // 檢查玩家是否有鑰匙
 };

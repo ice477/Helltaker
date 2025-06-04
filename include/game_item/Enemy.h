@@ -15,6 +15,7 @@ public:
     int m_OffsetX;
     int m_OffsetY;
 
+
 };
 
 #endif
