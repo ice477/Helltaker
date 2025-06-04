@@ -2,9 +2,10 @@
 #include "Key.h"
 
 constexpr int TILE_SIZE = 75;
+constexpr int OFFSET_X = -300;
+constexpr int OFFSET_Y = -275;
 
-
-Key::Key(int index) : Box(index) {
+Key::Key() {
     m_Animation = std::make_shared<Util::Animation>(
     std::vector<std::string>{
         "../assets/Texture2D/assets100V20104.png", "../assets/Texture2D/assets100V20105.png", "../assets/Texture2D/assets100V20106.png", "../assets/Texture2D/assets100V20107.png",
@@ -23,10 +24,9 @@ void Key::Update(std::vector<std::vector<int>>& m_MapData) {
     for (int y = 0; y < m_MapData.size(); ++y) {
         for (int x = 0; x < m_MapData[y].size(); ++x) {
             if (m_MapData[y][x] == 6) {
-                m_Animation->Play();
                 if (count == m_Index) {
-                    m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
-                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE;
+                    m_Transform.translation.x = OFFSET_X + x * TILE_SIZE;
+                    m_Transform.translation.y = OFFSET_Y + (7 - y) * TILE_SIZE;
                     SetVisible(true);
                     return;
                 }
