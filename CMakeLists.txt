@@ -126,6 +126,8 @@ set(EXAMPLE_FILES
         include/game_item/MapManager.h
         include/game_item/Key.cpp
         include/game_item/Key.h
+        include/game_item/Decorate.cpp
+        include/game_item/Decorate.hpp
         include/dialogue_item/Trans.cpp
         include/dialogue_item/Trans.h
 )
