@@ -17,11 +17,22 @@ public:
 
     State m_State = State::DEFAULT;
 
-    void SetMapData(const std::vector<std::vector<int>>& mapData); // 新增
+    void SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX, int offsetY);
 
-    void Update();
+    void Update(std::vector<std::vector<int>>& m_MapData);
+
+    void TryMove(int dx, int dy, std::vector<std::vector<int>>& map);
+
+    void SetHasKey(bool hasKey) { m_HasKey = hasKey; };
+
+    void SetOffset(int x, int y) { m_OffsetX = x; m_OffsetY = y; }
 
 private:
+    bool m_HasKey = false;
+
+    int m_OffsetX = 0;
+    int m_OffsetY = 0;
+
     int m_PosX;
     int m_PosY;
 
