@@ -9,6 +9,7 @@ DialogueBG::DialogueBG()
         std::vector<std::string>{
             "../assets/Texture2D/dialogueBG_abyss.png",
             "../assets/Texture2D/dialogueBG_abyss02.png",
+            //"../assets/Texture2D/Blank.png",
             "../assets/Texture2D/dialogueBG_abyss02Grad.png",
             "../assets/Texture2D/dialogueBG_home.png",
             "../assets/Texture2D/dialogueBG_throne2.png",
@@ -18,10 +19,13 @@ DialogueBG::DialogueBG()
 
         },
       false, 50, false, 1000)) {
-    m_Transform.translation = {0, 60};
-    m_Transform.scale = {1, 0.7f};
+
+    m_Transform.translation = {0, 40};
+    m_Transform.scale = {1.0f, 0.7f};
+    m_Transform.rotation = 0.0f;
+    SetVisible(true);
     SetDrawable(dialogueBG);
-    SetZIndex(1);
+    SetZIndex(2);
 }
 
 
@@ -29,7 +33,7 @@ void DialogueBG::Update() {
     // Update logic for DialogueBox if needed
     m_Transform.translation.x += 1;
 
-    if (m_Transform.translation.x >= static_cast<float>(PTSD_Config::WINDOW_WIDTH)-1016) {
+    if (m_Transform.translation.x >= static_cast<float>(PTSD_Config::WINDOW_WIDTH)-890) {//原本是-1016
         if (dialogueBG->GetCurrentFrameIndex() == 0) {
             dialogueBG->SetCurrentFrame(1);
         } else if (dialogueBG->GetCurrentFrameIndex() == 1) {
@@ -38,5 +42,4 @@ void DialogueBG::Update() {
         m_Transform.translation.x = 0;
 
     }
-
 }

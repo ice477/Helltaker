@@ -7,6 +7,7 @@
 #include "Util/Renderer.hpp"
 #include "game_item/StageBG.h"
 #include "game_item/MapManager.h"
+#include "game_item/Decorate.hpp"
 
 void App::Start() {
     LOG_TRACE("Start");
@@ -18,6 +19,8 @@ void App::Start() {
     m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
+    
+    m_Root.AddChild(m_Decorate);
 
     m_Root.AddChild(m_Hero);
     for (const auto& gate : m_Gates) {

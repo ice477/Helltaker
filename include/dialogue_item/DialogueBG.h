@@ -9,7 +9,7 @@
 class DialogueBG : public Util::GameObject {
 public:
     DialogueBG();
-   // void SetText(const std::string& text);
+    // void SetText(const std::string& text);
     void Update();
 
 private:

@@ -126,6 +126,8 @@ set(EXAMPLE_FILES
         include/game_item/MapManager.h
         include/game_item/Key.cpp
         include/game_item/Key.h
+        include/game_item/Decorate.cpp
+        include/game_item/Decorate.hpp
         include/dialogue_item/Trans.cpp
         include/dialogue_item/Trans.h
         include/game_item/Trap.cpp
@@ -229,3 +231,4 @@ target_compile_options(AudioTest PRIVATE
 
 include(GoogleTest)
 gtest_discover_tests(Tests)
+
