@@ -7,19 +7,26 @@
 #include "Util/Renderer.hpp"
 #include "game_item/StageBG.h"
 #include "game_item/MapManager.h"
+#include "game_item/Decorate.hpp"
 
 void App::Start() {
     LOG_TRACE("Start");
 
     m_Root.AddChild(m_Character);
-
+    m_Character->SetVisible(false);
 
     m_Root.AddChild(m_Trans);
     m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
+    m_StageBG->SetVisible(false);
+
+    m_Root.AddChild(m_DialogueBG);
 
     m_Root.AddChild(m_Hero);
+    m_Hero->SetVisible(false);
+
+    m_Root.AddChild(m_Decorate);
     for (const auto& gate : m_Gates) {
         m_Root.AddChild(gate);
     }
@@ -37,10 +44,13 @@ void App::Start() {
 }
 
 void App::Update() {
-
     Visible();
+    //m_Hero -> SetVisible(false);
+
+    m_DialogueBG->SetVisible(true);
+    m_DialogueBG->Update();
     m_Character->Update();
-    m_Character->SetVisible(true);
+    //m_Character->SetVisible(true);
 
     m_Trans->Update();
     m_Cat->Update();
@@ -53,6 +63,7 @@ void App::Update() {
 }
 
 void App::Push_Box() {
+    m_DialogueBG->SetVisible(false);
     static bool isMapLoaded = false; // 靜態變量，用於記錄地圖是否已加載
 
     if (!isMapLoaded) {
@@ -179,7 +190,7 @@ void App::End() {
 
 void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
-        m_Character->SetVisible(true);
+        //m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);
 
         m_Hero->SetVisible(false);
