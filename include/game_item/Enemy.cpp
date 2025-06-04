@@ -1,8 +1,6 @@
 #include "Enemy.h"
 
 constexpr int TILE_SIZE = 75;
-constexpr int OFFSET_X = -300;
-constexpr int OFFSET_Y = -275;
 
 Enemy::Enemy(int index) : Box(index) {
     m_Animation = std::make_shared<Util::Animation>(
@@ -22,10 +20,11 @@ void Enemy::Update(std::vector<std::vector<int>>& m_MapData) {
     int count = 0;
     for (int y = 0; y < m_MapData.size(); ++y) {
         for (int x = 0; x < m_MapData[y].size(); ++x) {
-            if (m_MapData[y][x] == 4) {
+            if (m_MapData[y][x] == 4) { // 4 代表 enemy
                 if (count == m_Index) {
-                    m_Transform.translation.x = OFFSET_X + x * TILE_SIZE;
-                    m_Transform.translation.y = OFFSET_Y + (7 - y) * TILE_SIZE;
+                    m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
+                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE;
+                    SetVisible(true);
                     return;
                 }
                 ++count;

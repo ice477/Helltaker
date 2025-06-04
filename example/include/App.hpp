@@ -39,6 +39,10 @@ public:
 
     void Visible();
     void CleaObjects();
+    void SetOffset(int currentLevel);
+
+    int m_OffsetX = -300;
+    int m_OffsetY = -275;
 
     std::vector<std::vector<int>> m_MapData;
 
