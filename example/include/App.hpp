@@ -10,6 +10,7 @@
 #include "GiraffeText.hpp"
 #include "dialogue_item/Trans.h"
 #include "dialogue_item/Character.h"
+#include "dialogue_item/DialogueBG.h"
 #include "game_item/Box.h"
 #include "game_item/Hero.h"
 #include "game_item/StageBG.h"

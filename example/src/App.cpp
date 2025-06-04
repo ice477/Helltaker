@@ -19,6 +19,8 @@ void App::Start() {
     m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
+
+    m_Root.AddChild(m_DialogueBG);
     
     m_Root.AddChild(m_Decorate);
 
@@ -46,6 +48,7 @@ void App::Update() {
     Visible();
     m_Character->Update();
     m_Character->SetVisible(true);
+    m_DialogueBG->Update();
 
     m_Trans->Update();
     m_Cat->Update();
@@ -199,6 +202,7 @@ void App::End() {
 void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
         m_Character->SetVisible(true);
+        m_DialogueBG->SetVisible(true);
         m_StageBG->SetVisible(false);
         if (m_Hero) {
             m_Hero->SetVisible(false);
@@ -210,6 +214,7 @@ void App::Visible() {
         for (const auto& trap : m_Traps) trap->SetVisible(false);
     } else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
+        m_DialogueBG->SetVisible(false);
         m_StageBG->SetVisible(true);
         if (m_Hero) {
             m_Hero->SetVisible(true);
