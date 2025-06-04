@@ -32,12 +32,14 @@ void App::Start() {
     for (const auto& box : m_Boxes) {
         m_Root.AddChild(box);
     }
+    for (const auto& trap:m_Traps) {
+        m_Root.AddChild(trap);
+    }
 
     m_CurrentState = State::UPDATE;
 }
 
 void App::Update() {
-
     Visible();
     m_Character->Update();
     m_Character->SetVisible(true);
@@ -57,36 +59,40 @@ void App::Push_Box() {
 
     if (!isMapLoaded) {
         LOG_DEBUG("Initializing map for PUSH_BOX scene.");
-
+        CleaObjects();
         // 清除當前關卡的物件
         m_Hero.reset();
         m_Boxes.clear();
         m_Enemies.clear();
         m_Gates.clear();
         m_Keys.clear();
+        m_Traps.clear();
 
         // 初始化地圖和物件
         MapManager mapManager;
-        if (mapManager.LoadMap("../assets/maps/test_map.txt")) {
+        if (mapManager.LoadMap(currentLevel)) {
             LOG_INFO("Map loaded successfully for level {}", currentLevel);
 
-            auto& mapData = mapManager.GetMapDataMutable();
+
+            m_MapData = mapManager.GetMapDataMutable();
             constexpr int tilesize = 75;
             constexpr int offsetX = -300;
             constexpr int offsetY = -275;
 
-            for (int y = 0; y < static_cast<int>(mapData.size()); y++) {
-                for (int x = 0; x < static_cast<int>(mapData[y].size()); x++) {
-                    int tile = mapData[y][x];
-                    int worldX = offsetX + x * tilesize; // X 軸保持不變
-                    int worldY = offsetY + (mapData.size() - 1 - y) * tilesize; // Y 軸翻轉
-                    fmt::print("worldX: {}, worldY: {}, mapdata_size: {}\n", worldX, worldY, mapData.size());
+            int boxIndex = 0;
+            int enemyIndex = 0;
+            int gateIndex = 0;
 
+            for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
+                for (int x = 0; x < static_cast<int>(m_MapData[y].size()); x++) {
+                    int tile = m_MapData[y][x];
+                    int worldX = offsetX + x * tilesize; // X 軸保持不變
+                    int worldY = offsetY + (m_MapData.size() - 1 - y) * tilesize; // Y 軸翻轉
                     switch (tile) {
                     case 2: { // Hero
                         if (!m_Hero) {
                             m_Hero = std::make_shared<Hero>();
-                            m_Hero->SetMapData(mapData);
+                            m_Hero->SetMapData(m_MapData);
                         }
                         m_Hero->m_Transform.translation = {worldX, worldY};
                         m_Hero->SetVisible(true);
@@ -94,23 +100,21 @@ void App::Push_Box() {
                         break;
                     }
                     case 3: { // Box
-                        auto box = std::make_shared<Box>();
+                        auto box = std::make_shared<Box>(boxIndex++);
                         box->m_Transform.translation = {worldX, worldY};
                         box->SetVisible(true);
                         m_Boxes.push_back(box);
-                        LOG_DEBUG("Box placed at ({}, {})", worldX, worldY);
                         break;
                     }
                     case 4: { // Enemy
-                        auto enemy = std::make_shared<Enemy>();
+                        auto enemy = std::make_shared<Enemy>(enemyIndex++);
                         enemy->m_Transform.translation = {worldX, worldY};
                         enemy->SetVisible(true);
                         m_Enemies.push_back(enemy);
-                        LOG_DEBUG("Enemy placed at ({}, {})", worldX, worldY);
                         break;
                     }
                     case 5: { // Gate
-                        auto gate = std::make_shared<Gate>();
+                        auto gate = std::make_shared<Gate>(gateIndex++);
                         gate->m_Transform.translation = {worldX, worldY};
                         gate->SetVisible(true);
                         m_Gates.push_back(gate);
@@ -133,6 +137,13 @@ void App::Push_Box() {
                         LOG_DEBUG("Key placed at ({}, {})", worldX, worldY);
                         break;
                     }
+                    case 8:{ //trap
+                        auto trap = std::make_shared<Trap>();
+                        trap->m_Transform.translation = {worldX, worldY};
+                        trap->SetVisible(true);
+                        m_Traps.push_back(trap);
+                        break;
+                    }
                     default:
                         break;
                     }
@@ -145,8 +156,9 @@ void App::Push_Box() {
             for (const auto& enemy : m_Enemies) m_Root.AddChild(enemy);
             for (const auto& gate : m_Gates) m_Root.AddChild(gate);
             for (const auto& key : m_Keys) m_Root.AddChild(key);
+            for (const auto& trap : m_Traps) m_Root.AddChild(trap);
 
-            isMapLoaded = true; // 標記地圖已加載
+            isMapLoaded = true; // 設置地圖加載狀態為已加載
         } else {
             LOG_ERROR("Failed to load map for level {}", currentLevel);
         }
@@ -158,11 +170,11 @@ void App::Push_Box() {
     m_Trans->Update();
 
 
-    m_Hero->Update();
-    for (const auto& box : m_Boxes) box->Update();
-    for (const auto& enemy : m_Enemies) enemy->Update();
-    for (const auto& gate : m_Gates) gate->Update();
-    for (const auto& key : m_Keys) key->Update();
+    m_Hero->Update(m_MapData);
+    for (const auto& box : m_Boxes) box->Update(m_MapData);
+    for (const auto& enemy : m_Enemies) enemy->Update(m_MapData);
+    for (const auto& gate : m_Gates) gate->Update(m_MapData);
+    for (const auto& key : m_Keys) key->Update(m_MapData);
     m_Root.Update();
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
@@ -170,6 +182,12 @@ void App::Push_Box() {
         m_CurrentState = State::UPDATE;
         currentLevel++;
         isMapLoaded = false; // 重置地圖加載狀態
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::R)) {
+        LOG_DEBUG("R Pressed. Reloading current level.");
+        isMapLoaded = false;
+
     }
 }
 
@@ -200,4 +218,13 @@ void App::Visible() {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);
     }
+}
+
+void App::CleaObjects() {
+    m_Root.RemoveChild(m_Hero);
+    for (const auto& box : m_Boxes) m_Root.RemoveChild(box);
+    for (const auto& enemy : m_Enemies) m_Root.RemoveChild(enemy);
+    for (const auto& gate : m_Gates) m_Root.RemoveChild(gate);
+    for (const auto& key : m_Keys) m_Root.RemoveChild(key);
+    for (const auto& trap : m_Traps) m_Root.RemoveChild(trap);
 }

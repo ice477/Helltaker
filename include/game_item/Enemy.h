@@ -6,10 +6,8 @@
 
 class Enemy : public Box {
 public:
-    Enemy();
-    void Update();
-private:
-    std::shared_ptr<Util::Animation> m_Animation;
+    Enemy(int index);
+    void Update(std::vector<std::vector<int>>& m_MapData) override;
 
 };
 

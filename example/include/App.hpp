@@ -16,6 +16,7 @@
 #include "game_item/Gate.h"
 #include "game_item/Enemy.h"
 #include "game_item/Key.h"
+#include "game_item/Trap.h"
 
 class App {
 public:
@@ -37,6 +38,9 @@ public:
     void End();
 
     void Visible();
+    void CleaObjects();
+
+    std::vector<std::vector<int>> m_MapData;
 
 private:
     State m_CurrentState = State::START;
@@ -57,15 +61,19 @@ private:
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
     std::vector<std::shared_ptr<Gate>> m_Gates;
     std::vector<std::shared_ptr<Key>> m_Keys;
+    std::vector<std::shared_ptr<Trap>> m_Traps;
 
     Util::Renderer m_Root;
 
     bool showDemoWindow = true;
 
-    int currentLevel = 0;
-    int previousLevel = 0;
+    int isReload = false;
+
+    int currentLevel = 1;
 
     MapManager m_MapManager;
+
+
 };
 
 #endif
