@@ -9,7 +9,7 @@ DialogueBG::DialogueBG()
         std::vector<std::string>{
             "../assets/Texture2D/dialogueBG_abyss.png",
             "../assets/Texture2D/dialogueBG_abyss02.png",
-            "../assets/Texture2D/Blank.png",
+            //"../assets/Texture2D/Blank.png",
             "../assets/Texture2D/dialogueBG_abyss02Grad.png",
             "../assets/Texture2D/dialogueBG_home.png",
             "../assets/Texture2D/dialogueBG_throne2.png",
