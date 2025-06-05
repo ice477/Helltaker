@@ -15,13 +15,17 @@ public:
         WIN,
     };
 
+    bool m_PassedLevel = false;
+    bool PassedLevel() const { return m_PassedLevel; }
+
     State m_State = State::DEFAULT;
+
 
     void SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX, int offsetY);
 
-    void Update(std::vector<std::vector<int>>& m_MapData);
+    bool Update(std::vector<std::vector<int>>& m_MapData);
 
-    void TryMove(int dx, int dy, std::vector<std::vector<int>>& map);
+    bool TryMove(int dx, int dy, std::vector<std::vector<int>>& map);
 
     void SetHasKey(bool hasKey) { m_HasKey = hasKey; };
 
@@ -35,6 +39,8 @@ private:
 
     int m_PosX;
     int m_PosY;
+
+    bool m_ReachedTarget = false;
 
     bool m_Initialized = false;
     std::vector<std::vector<int>> m_MapData;

@@ -32,6 +32,9 @@ void App::Start() {
     for (const auto& box : m_Boxes) {
         m_Root.AddChild(box);
     }
+    for (const auto &target: m_Targets) {
+        m_Root.AddChild(target);
+    }
     for (const auto& trap:m_Traps) {
         m_Root.AddChild(trap);
     }
@@ -69,6 +72,9 @@ void App::Push_Box() {
         m_Keys.clear();
         m_Traps.clear();
 
+        m_Decs.clear();
+
+
         // 初始化地圖和物件
         MapManager mapManager;
         if (mapManager.LoadMap(currentLevel)) {
@@ -77,13 +83,14 @@ void App::Push_Box() {
             constexpr int tilesize = 75;
 
             // 統計各類 tile 數量
-            int boxCount = 0, enemyCount = 0, gateCount = 0, keyCount = 0, trapCount = 0;
+            int boxCount = 0, enemyCount = 0, gateCount = 0, keyCount = 0,targetCount =0, trapCount = 0;
             for (const auto& row : m_MapData) {
                 for (int tile : row) {
                     if (tile == 3) boxCount++;
                     if (tile == 4) enemyCount++;
                     if (tile == 5) gateCount++;
-                    if (tile == 6 || tile == 7) keyCount++;
+                    if (tile == 6) keyCount++;
+                    if (tile == 7) targetCount++;
                     if (tile == 8) trapCount++;
                 }
             }
@@ -92,9 +99,10 @@ void App::Push_Box() {
             m_Enemies.reserve(enemyCount);
             m_Gates.reserve(gateCount);
             m_Keys.reserve(keyCount);
+            m_Targets.reserve(targetCount);
             m_Traps.reserve(trapCount);
 
-            int boxIndex = 0, enemyIndex = 0, gateIndex = 0, keyIndex = 0, trapIndex = 0;
+            int boxIndex = 0, enemyIndex = 0, gateIndex = 0, keyIndex = 0,targetIndex = 0, trapIndex = 0;
             for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
                 for (int x = 0; x < static_cast<int>(m_MapData[y].size()); x++) {
                     int tile = m_MapData[y][x];
@@ -110,30 +118,35 @@ void App::Push_Box() {
                         m_Hero->m_Transform.translation = {worldX, worldY};
                         m_Hero->SetVisible(true);
                         break;
-                    case 3:
+                    case 3://box
                         m_Boxes.push_back(std::make_shared<Box>(boxIndex++));
                         m_Boxes.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Boxes.back()->m_Transform.translation = {worldX, worldY};
                         m_Boxes.back()->SetVisible(true);
                         break;
-                    case 4:
+                    case 4://enemy
                         m_Enemies.push_back(std::make_shared<Enemy>(enemyIndex++));
                         m_Enemies.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Enemies.back()->m_Transform.translation = {worldX, worldY};
                         m_Enemies.back()->SetVisible(true);
                         break;
-                    case 5:
+                    case 5://gate
                         m_Gates.push_back(std::make_shared<Gate>(gateIndex++));
                         m_Gates.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Gates.back()->m_Transform.translation = {worldX, worldY};
                         m_Gates.back()->SetVisible(true);
                         break;
-                    case 6: case 7:
+                    case 6: // key
                         m_Keys.push_back(std::make_shared<Key>(keyIndex++));
                         m_Keys.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Keys.back()->m_Transform.translation = {worldX, worldY};
                         m_Keys.back()->SetVisible(true);
                         break;
+                    case 7: //target
+                        m_Targets.push_back(std::make_shared<Target>(targetIndex++));
+                        m_Targets.back()->SetOffset(m_OffsetX, m_OffsetY);
+                        m_Targets.back()->m_Transform.translation = {worldX, worldY};
+                        m_Targets.back()->SetVisible(true);
                     case 8:
                         m_Traps.push_back(std::make_shared<Trap>(trapIndex++));
                         m_Traps.back()->SetOffset(m_OffsetX, m_OffsetY);
@@ -151,6 +164,7 @@ void App::Push_Box() {
             for (const auto& enemy : m_Enemies) m_Root.AddChild(enemy);
             for (const auto& gate : m_Gates) m_Root.AddChild(gate);
             for (const auto& key : m_Keys) m_Root.AddChild(key);
+            for (const auto& target : m_Targets) m_Root.AddChild(target);
             for (const auto& trap : m_Traps) m_Root.AddChild(trap);
 
             isMapLoaded = true; // 設置地圖加載狀態為已加載
@@ -173,6 +187,16 @@ void App::Push_Box() {
     for (const auto& key : m_Keys) key->Update(m_MapData);
     for (const auto& trap : m_Traps) trap->Update(m_MapData);
     m_Root.Update();
+
+    if (m_Hero && m_Hero->PassedLevel()) {
+        LOG_DEBUG("Level passed! Switching to next level.");
+        m_Trans->m_Animation->SetCurrentFrame(0);
+        m_CurrentState = State::UPDATE;
+        currentLevel++;
+        SetOffset(currentLevel);
+        isMapLoaded = false;
+        m_Hero->m_PassedLevel = false;
+    }
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to UPDATE scene.");
@@ -197,6 +221,9 @@ void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
         m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
+        for (const auto& decorate : m_Decs) {
+            decorate->SetVisible(false);
+        }
         if (m_Hero) {
             m_Hero->SetVisible(false);
         }
@@ -204,10 +231,14 @@ void App::Visible() {
         for (const auto& gate : m_Gates) gate->SetVisible(false);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
         for (const auto& key : m_Keys) key->SetVisible(false);
+        for (const auto& target : m_Targets) target->SetVisible(false);
         for (const auto& trap : m_Traps) trap->SetVisible(false);
     } else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
+        for (const auto& decorate : m_Decs) {
+            decorate->SetVisible(true);
+        }
         if (m_Hero) {
             m_Hero->SetVisible(true);
         }
@@ -215,6 +246,7 @@ void App::Visible() {
         for (const auto& gate : m_Gates) gate->SetVisible(true);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(true);
         for (const auto& key : m_Keys) key->SetVisible(true);
+        for (const auto& target : m_Targets) target->SetVisible(true);
         for (const auto& trap : m_Traps) trap->SetVisible(true);
     } else {
         m_Character->SetVisible(false);
@@ -231,6 +263,7 @@ void App::CleaObjects() {
     for (const auto& enemy : m_Enemies) m_Root.RemoveChild(enemy);
     for (const auto& gate : m_Gates) m_Root.RemoveChild(gate);
     for (const auto& key : m_Keys) m_Root.RemoveChild(key);
+    for (const auto& target : m_Targets) m_Root.RemoveChild(target);
     for (const auto& trap : m_Traps) m_Root.RemoveChild(trap);
     m_Hero.reset();
     m_Boxes.clear();
@@ -270,5 +303,6 @@ void App::SetOffset(int currentLevel) {
     for (auto& box : m_Boxes) box->SetOffset(m_OffsetX, m_OffsetY);
     for (auto& enemy : m_Enemies) enemy->SetOffset(m_OffsetX, m_OffsetY);
     for (auto& key : m_Keys) key->SetOffset(m_OffsetX, m_OffsetY);
+    for (auto& target : m_Targets) target->SetOffset(m_OffsetX, m_OffsetY);
     for (auto& trap : m_Traps) trap->SetOffset(m_OffsetX, m_OffsetY);
 }

@@ -34,6 +34,7 @@ void Trans::Update() {
          SetVisible(false);
      }
 
+
      if (Util::Input::IsKeyDown(Util::Keycode::K)) {
          m_Animation->SetCurrentFrame(0);
      }

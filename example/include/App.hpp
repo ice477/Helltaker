@@ -17,6 +17,9 @@
 #include "game_item/Enemy.h"
 #include "game_item/Key.h"
 #include "game_item/Trap.h"
+#include "game_item/Target.h"
+#include "game_item/Decorate.h"
+#include "dialogue_item/DialogueBG.h"
 
 class App {
 public:
@@ -60,12 +63,17 @@ private:
 
     std::shared_ptr<StageBG> m_StageBG = std::make_shared<StageBG>();
 
+    std::shared_ptr<DialogueBG> m_DialogueBG = std::make_shared<DialogueBG>();
+    std::shared_ptr<Decorate> m_Decorate = std::make_shared<Decorate>();
+
     std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
     std::vector<std::shared_ptr<Gate>> m_Gates;
     std::vector<std::shared_ptr<Key>> m_Keys;
+    std::vector<std::shared_ptr<Target>> m_Targets;
     std::vector<std::shared_ptr<Trap>> m_Traps;
+    std::vector<std::shared_ptr<Decorate>> m_Decs;
 
     Util::Renderer m_Root;
 
