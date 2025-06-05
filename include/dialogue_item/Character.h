@@ -3,6 +3,7 @@
 
 #include "../Util/Animation.hpp"
 #include "../Util/GameObject.hpp"
+#include "../Util/image.hpp"
 #include "../pch.hpp"
 
 class Character : public Util::GameObject {
