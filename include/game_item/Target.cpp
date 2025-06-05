@@ -1,8 +1,13 @@
-#include "Enemy.h"
+//
+// Created by 蘇柏瑄 on 2025/6/6.
+//
+
+#include "Target.h"
+
 
 constexpr int TILE_SIZE = 75;
 
-Enemy::Enemy(int index) : Box(index) {
+Target::Target(int index) : Box(index) {
     m_Animation = std::make_shared<Util::Animation>(
         std::vector<std::string>{
             "../assets/Texture2D/assets100V20225.png", "../assets/Texture2D/assets100V20226.png", "../assets/Texture2D/assets100V20227.png", "../assets/Texture2D/assets100V20228.png",
@@ -16,7 +21,8 @@ Enemy::Enemy(int index) : Box(index) {
     SetZIndex(5);
 }
 
-void Enemy::Update(std::vector<std::vector<int>>& m_MapData) {
+
+void Target::Update(std::vector<std::vector<int>>& m_MapData, int level) {
     int count = 0;
     for (int y = 0; y < m_MapData.size(); ++y) {
         for (int x = 0; x < m_MapData[y].size(); ++x) {

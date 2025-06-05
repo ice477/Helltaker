@@ -2,7 +2,8 @@
 #include <fstream>
 #include <sstream>
 
-bool MapManager::LoadMap(const std::string& filePath) {
+bool MapManager::LoadMap(int level) {
+    std::string filePath = "../assets/maps/test_map" + std::to_string(level) + ".txt";
     std::ifstream file(filePath);
     if(!file.is_open()) return false;
 
@@ -20,28 +21,6 @@ bool MapManager::LoadMap(const std::string& filePath) {
     return true;
 }
 
-bool MapManager::CanMove(int x, int y) const {
-    return (m_MapData[y][x] == static_cast<int>(TileType::Empty));
-}
-
-void MapManager::PushBox(int x, int y, int newX, int newY) {
-    if (CanMove(newX, newY)) {
-        m_MapData[y][x] = static_cast<int>(TileType::Empty);
-        m_MapData[newY][newX] = static_cast<int>(TileType::Box);
-    }
-}
-
-std::pair<int, int> MapManager::GetPlayerInitialPosition() const {
-    for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
-        for (int x = 0; x < static_cast<int>(m_MapData[y].size()); x++) {
-            if (m_MapData[y][x] == static_cast<int>(TileType::Hero)) {
-                return {x, y};
-            }
-        }
-    }
-    throw std::runtime_error("Player initial position not found in the map");
-}
-
-const std::vector<std::vector<int>>& MapManager::GetMapData() const {
+std::vector<std::vector<int>>& MapManager::GetMapDataMutable() {
     return m_MapData;
 }
