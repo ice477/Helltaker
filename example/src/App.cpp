@@ -6,6 +6,7 @@
 #include "Util/Logger.hpp"
 #include "Util/Renderer.hpp"
 #include "game_item/StageBG.h"
+#include "game_item/Decoration.hpp"
 
 void App::Start() {
     LOG_TRACE("Start");
@@ -23,12 +24,21 @@ void App::Start() {
     m_Cat->SetVisible(false);
 
     m_Root.AddChild(m_Character);
+    m_Character->SetVisible(false);
 
 
     m_Root.AddChild(m_Trans);
     m_Root.AddChild(m_Trans);
 
     m_Root.AddChild(m_StageBG);
+    m_StageBG->SetVisible(false);
+
+    m_Root.AddChild(m_DialogueBG);
+
+    m_Root.AddChild(m_Decoration);
+    m_Root.AddChild(m_DecorationRight);
+    m_Root.AddChild(m_DecorateLeft);
+    m_Root.AddChild(m_DecorateRight);
 
     for (const auto& hero : m_Heroes) {
         m_Root.AddChild(hero);
@@ -50,15 +60,16 @@ void App::Start() {
 }
 
 void App::Update() {
-
-    Visible();
+    Visible();//測試用，讓圖片全部可見
     m_Character->Update();
-    m_Character->SetVisible(true);
-
+    m_DialogueBG->Update();
     m_Trans->Update();
     m_Cat->Update();
     m_Root.Update();
+    Visible();
 
+    //dialogueBG.Update(); // 確保背景的 Update 被調用
+    //character.Update();  // 確保角色的 Update 被調用
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
         m_CurrentState = State::PUSH_BOX;
@@ -183,7 +194,7 @@ void App::End() {
 
 void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
-        m_Character->SetVisible(true);
+        //m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
 
         for (const auto& hero : m_Heroes) hero->SetVisible(false);
@@ -191,15 +202,28 @@ void App::Visible() {
         for (const auto& gate : m_Gates) gate->SetVisible(false);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
         for (const auto& key : m_Keys) key->SetVisible(false);
+        m_DialogueBG->SetVisible(true);
+        m_Decoration->SetVisible(false);
+        m_DecorationRight->SetVisible(false);
+        m_DecorateLeft->SetVisible(false);
+        m_DecorateRight->SetVisible(false);
     } else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
-
+        m_DialogueBG->SetVisible(false);
+        m_Decoration->SetVisible(true);
+        m_DecorationRight->SetVisible(true);
+        m_DecorateLeft->SetVisible(true);
+        m_DecorateRight->SetVisible(true);
         for (const auto& hero : m_Heroes) hero->SetVisible(true);
         for (const auto& box : m_Boxes) box->SetVisible(true);
         for (const auto& gate : m_Gates) gate->SetVisible(true);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(true);
         for (const auto& key : m_Keys) key->SetVisible(true);
+        m_DecorationRight->Update();
+        m_Decoration->Update();
+        m_DecorateLeft->Update();
+        m_DecorateRight->Update();
     } else {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);

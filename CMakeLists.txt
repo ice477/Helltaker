@@ -94,7 +94,6 @@ set(INCLUDE_FILES
     ${INCLUDE_DIR}/Util/Base64.hpp
     ${INCLUDE_DIR}/Util/Animation.hpp
     ${INCLUDE_DIR}/Util/Position.hpp
-        include/dialogue_item/Character.cpp
         include/dialogue_item/Character.h
 )
 set(EXAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example)
@@ -109,7 +108,10 @@ set(EXAMPLE_FILES
     ${EXAMPLE_DIR}/include/Giraffe.hpp
     ${EXAMPLE_DIR}/include/GiraffeText.hpp
     ${EXAMPLE_DIR}/include/Cat.hpp
+        include/game_item/Decoration.cpp
+        include/game_item/Decoration.hpp
         include/dialogue_item/Character.h
+        include/dialogue_item/Character.cpp
         include/dialogue_item/DialogueBG.cpp
         include/dialogue_item/DialogueBG.h
         include/game_item/Hero.cpp
