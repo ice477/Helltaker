@@ -19,7 +19,6 @@ Trans::Trans()
      SetDrawable(m_Animation);
      SetZIndex(10);
      SetVisible(false);
-    m_Animation->SetCurrentFrame(28);
      m_Animation->SetFrameRange(0, 28); // 設置動畫範圍
 }
 
@@ -38,7 +37,4 @@ void Trans::Update() {
          m_Animation->SetCurrentFrame(0);
      }
 
-    if (Util::Input::IsKeyDown(Util::Keycode::R)) {
-        m_Animation->SetCurrentFrame(0);
-    }
  }
