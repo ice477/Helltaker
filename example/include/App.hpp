@@ -19,7 +19,7 @@
 #include "game_item/Key.h"
 #include "game_item/Trap.h"
 #include "game_item/Target.h"
-#include "game_item/Decorate.h"
+#include "game_item/Decoration.hpp"
 #include "dialogue_item/DialogueBG.h"
 #include "game_item/Decoration.hpp"
 
@@ -70,9 +70,7 @@ private:
     std::shared_ptr<DecorateLeft> m_DecorateLeft = std::make_shared<DecorateLeft>();
     std::shared_ptr<DecorateRight> m_DecorateRight = std::make_shared<DecorateRight>();
 
-
-    std::shared_ptr<DialogueBG> m_DialogueBG = std::make_shared<DialogueBG>();
-    std::shared_ptr<Decorate> m_Decorate = std::make_shared<Decorate>();
+    std::shared_ptr<Decoration> m_Decorate = std::make_shared<Decoration>();
 
     std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
     std::vector<std::shared_ptr<Box>> m_Boxes;

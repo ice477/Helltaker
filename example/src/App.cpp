@@ -85,8 +85,6 @@ void App::Push_Box() {
         m_Keys.clear();
         m_Traps.clear();
 
-        m_Decs.clear();
-
 
         // 初始化地圖和物件
         MapManager mapManager;
@@ -234,9 +232,6 @@ void App::Visible() {
     if (m_CurrentState == State::UPDATE) {
         //m_Character->SetVisible(true);
         m_StageBG->SetVisible(false);
-        for (const auto& decorate : m_Decs) {
-            decorate->SetVisible(false);
-        }
         if (m_Hero) {
             m_Hero->SetVisible(false);
         }
@@ -294,6 +289,7 @@ void App::CleaObjects() {
     m_Enemies.clear();
     m_Gates.clear();
     m_Keys.clear();
+    m_Targets.clear();
     m_Traps.clear();
 }
 
