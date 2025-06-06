@@ -58,22 +58,24 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX,
     }
 }
 
-void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
+bool Hero::Update(std::vector<std::vector<int>>& m_MapData) {
     if (!m_Initialized && !m_MapData.empty()) {
         m_MapData[m_PosY][m_PosX] = 0;
         m_Initialized = true;
     }
 
     if (m_State != State::MOVE) {
-        if (Util::Input::IsKeyDown(Util::Keycode::W)) TryMove(0, -1, m_MapData);
-        if (Util::Input::IsKeyDown(Util::Keycode::S)) TryMove(0, 1, m_MapData);
+        if (Util::Input::IsKeyDown(Util::Keycode::W))
+            m_ReachedTarget = TryMove(0, -1, m_MapData);
+        if (Util::Input::IsKeyDown(Util::Keycode::S))
+            m_ReachedTarget = TryMove(0, 1, m_MapData);
         if (Util::Input::IsKeyDown(Util::Keycode::A)) {
             m_Transform.scale = {-0.75f, 0.75f};
-            TryMove(-1, 0, m_MapData);
+            m_ReachedTarget = TryMove(-1, 0, m_MapData);
         }
         if (Util::Input::IsKeyDown(Util::Keycode::D)) {
             m_Transform.scale = {0.75f, 0.75f};
-            TryMove(1, 0, m_MapData);
+            m_ReachedTarget = TryMove(1, 0, m_MapData);
         }
     }
 
@@ -100,13 +102,14 @@ void Hero::Update(std::vector<std::vector<int>>& m_MapData) {
             m_Animation->SetFrameRange(0, 11);
         }
     }
+    return m_ReachedTarget;
 }
 
-void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
+bool Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
     int nextX = m_PosX + dx;
     int nextY = m_PosY + dy;
     if (nextY < 0 || nextY >= (int)map.size() || nextX < 0 || nextX >= (int)map[0].size())
-        return;
+        return true;
 
     int target = map[nextY][nextX];
     // 空地
@@ -116,7 +119,7 @@ void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
         m_PosX = nextX;
         m_PosY = nextY;
         m_Animation->SetFrameRange(12, 17);
-        return;
+        return true;
     }
     // 箱子
     if (target == 3) {
@@ -126,7 +129,7 @@ void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
             map[boxNextY][boxNextX] = 3;
             map[nextY][nextX] = 0;
         }
-        return;
+        return true;
     }
     // 敵人
     if (target == 4) {
@@ -138,7 +141,7 @@ void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
         } else {
             map[nextY][nextX] = 0;
         }
-        return;
+        return true;
     }
     // 門
     if (target == 5 && m_HasKey) {
@@ -148,7 +151,7 @@ void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
         m_PosX = nextX;
         m_PosY = nextY;
         m_Animation->SetFrameRange(12, 17);
-        return;
+        return true;
     }
     // 鑰匙
     if (target == 6) {
@@ -159,15 +162,21 @@ void Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
         m_PosX = nextX;
         m_PosY = nextY;
         m_Animation->SetFrameRange(12, 17);
-        return;
+        return true;
     }
-    // 目標、陷阱
-    if (target == 7 || target == 8) {
+    // 目標
+    if (target == 7) {
+        m_PassedLevel = true;
+        return false;
+    }
+    // 陷阱
+    if (target == 8) {
         m_TargetPosition = {m_Transform.translation.x + dx * TILE_SIZE, m_Transform.translation.y - dy * TILE_SIZE};
         m_State = State::MOVE;
         m_PosX = nextX;
         m_PosY = nextY;
         m_Animation->SetFrameRange(12, 17);
-        return;
+        return true;
     }
+    return false;
 }
