@@ -140,35 +140,30 @@ void App::Push_Box() {
                         m_Boxes.push_back(std::make_shared<Box>(boxIndex++));
                         m_Boxes.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Boxes.back()->m_Transform.translation = {worldX, worldY};
-                        m_Boxes.back()->SetVisible(true);
                         break;
                     case 4://enemy
                         m_Enemies.push_back(std::make_shared<Enemy>(enemyIndex++));
                         m_Enemies.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Enemies.back()->m_Transform.translation = {worldX, worldY};
-                        m_Enemies.back()->SetVisible(true);
                         break;
                     case 5://gate
                         m_Gates.push_back(std::make_shared<Gate>(gateIndex++));
                         m_Gates.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Gates.back()->m_Transform.translation = {worldX, worldY};
-                        m_Gates.back()->SetVisible(true);
                         break;
                     case 6: // key
                         m_Keys.push_back(std::make_shared<Key>(keyIndex++));
                         m_Keys.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Keys.back()->m_Transform.translation = {worldX, worldY};
-                        m_Keys.back()->SetVisible(true);
                         break;
                     case 7: //target
                         m_Targets.push_back(std::make_shared<Target>(targetIndex++,currentLevel));
                         m_Targets.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Targets.back()->m_Transform.translation = {worldX, worldY + 25};
-                        m_Targets.back()->SetVisible(true);
+                        break;
                     case 8:
                         m_Traps.push_back(std::make_shared<Trap>(trapIndex++));
                         m_Traps.back()->SetOffset(m_OffsetX, m_OffsetY);
-                        m_Traps.back()->SetVisible(true);
                         break;
                     default:
                         break;
@@ -197,7 +192,6 @@ void App::Push_Box() {
             "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX"
         };
         if (m_LevelText) {
-            m_LevelText->SetVisible(true);
             m_LevelText->m_Transform.translation = { 530, -200 };
             m_LevelText->m_Text->SetText(fmt::format("{}", roman[currentLevel]));
         }
@@ -205,8 +199,6 @@ void App::Push_Box() {
         m_StepsLeft = m_StepLimit;
         m_Hero->SetSteps(m_StepLimit);
     }
-
-    Visible();
 
     m_StageBG->Update(currentLevel);
     m_Trans->Update();
@@ -229,6 +221,8 @@ void App::Push_Box() {
     for (const auto& trap : m_Traps) trap->Update(m_MapData);
     m_Root.Update();
 
+    Visible();
+
     if (m_Hero && m_Hero->PassedLevel()) {
         LOG_DEBUG("Level passed! Switching to next level.");
         m_Trans->m_Animation->SetCurrentFrame(0);
@@ -239,9 +233,13 @@ void App::Push_Box() {
         m_Hero->m_PassedLevel = false;
     }
 
-    if (m_Hero && m_Hero->HeroDead()) {
-        LOG_DEBUG("Hero is dead. Resetting level.");
-        isMapLoaded = false;
+    if (m_Hero->HeroDead()) {
+        if (m_Hero->m_Animation->GetCurrentFrameIndex() == 66) {
+            m_Trans->m_Animation->SetCurrentFrame(0);
+            SetOffset(currentLevel);
+            isMapLoaded = false;
+            m_Hero->m_HeroDead = false; // 重置英雄死亡狀態
+        }
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
@@ -263,13 +261,25 @@ void App::End() {
     LOG_TRACE("End");
 }
 
+
 void App::Visible() {
-    if (m_CurrentState == State::UPDATE) {
-        //m_Character->SetVisible(true);
+    // 1. Hero 死亡時優先處理，只顯示 Hero
+    if (m_Hero && m_Hero->HeroDead()) {
         m_StageBG->SetVisible(false);
-        if (m_Hero) {
-            m_Hero->SetVisible(false);
-        }
+        m_Hero->SetVisible(true);
+        for (const auto& box : m_Boxes) box->SetVisible(false);
+        for (const auto& gate : m_Gates) gate->SetVisible(false);
+        for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
+        for (const auto& key : m_Keys) key->SetVisible(false);
+        for (const auto& target : m_Targets) target->SetVisible(false);
+        for (const auto& trap : m_Traps) trap->SetVisible(false);
+        return;
+    }
+
+    // 2. 其他狀態依照 m_CurrentState 控制
+    if (m_CurrentState == State::UPDATE) {
+        m_StageBG->SetVisible(false);
+        if (m_Hero) m_Hero->SetVisible(false);
         m_StepText->SetVisible(false);
         m_LevelText->SetVisible(false);
         for (const auto& box : m_Boxes) box->SetVisible(false);
@@ -283,7 +293,8 @@ void App::Visible() {
         m_DecorationRight->SetVisible(false);
         m_DecorateLeft->SetVisible(false);
         m_DecorateRight->SetVisible(false);
-    } else if (m_CurrentState == State::PUSH_BOX) {
+    }
+    else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
         m_DialogueBG->SetVisible(false);
@@ -291,9 +302,8 @@ void App::Visible() {
         m_DecorationRight->SetVisible(true);
         m_DecorateLeft->SetVisible(true);
         m_DecorateRight->SetVisible(true);
-        if (m_Hero) {
-            m_Hero->SetVisible(true);
-        }
+
+        if (m_Hero) m_Hero->SetVisible(true);
         m_StepText->SetVisible(true);
         m_LevelText->SetVisible(true);
         for (const auto& box : m_Boxes) box->SetVisible(true);
@@ -307,21 +317,12 @@ void App::Visible() {
         m_DecorateLeft->Update();
         m_DecorateRight->Update();
     }
-    else if (m_Hero && m_Hero->HeroDead()) {
-        m_StageBG->SetVisible(false);
-        m_Hero->SetVisible(true);
-        for (const auto& box : m_Boxes) box->SetVisible(false);
-        for (const auto& gate : m_Gates) gate->SetVisible(false);
-        for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
-        for (const auto& key : m_Keys) key->SetVisible(false);
-        for (const auto& target : m_Targets) target->SetVisible(false);
-        for (const auto& trap : m_Traps) trap->SetVisible(false);
-    }
     else {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);
     }
 }
+
 
 void App::CleaObjects() {
     if (m_Hero)

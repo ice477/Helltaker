@@ -29,7 +29,6 @@ public:
         START,
         UPDATE,
         PUSH_BOX,
-        TRANS,
         END,
     };
 
@@ -78,7 +77,7 @@ private:
     std::shared_ptr<GiraffeText> m_StepText;      // 步數顯示
     std::shared_ptr<GiraffeText> m_LevelText;     // 關卡顯示
 
-    static constexpr int stepLimits[] = { 100, 30, 35, 40, 45, 50, 55, 60, 65 }; // 依關卡調整
+    static constexpr int stepLimits[] = { 10, 1, 1, 1, 45, 50, 55, 60, 65 }; // 依關卡調整
 
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;

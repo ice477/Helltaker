@@ -78,10 +78,10 @@ bool Hero::Update(std::vector<std::vector<int>>& m_MapData) {
         m_Animation->SetFrameRange(0,11);
     }else if (m_Animation->GetCurrentFrameIndex() == 66) {
         m_Animation->SetFrameRange(0,11);
-        m_StageOver = true;
+        m_HeroDead = true;
     }
 
-    if (m_State != State::MOVE ) {
+    if (m_State != State::MOVE  && !m_HeroDead) {
         if (Util::Input::IsKeyDown(Util::Keycode::W)) {
             m_Heromve =true;
             m_ReachedTarget = TryMove(0, -1, m_MapData);
@@ -104,6 +104,14 @@ bool Hero::Update(std::vector<std::vector<int>>& m_MapData) {
         if (m_Heromve) {
             m_Steps--;
             m_Heromve = false;
+        }
+
+        if (m_HeroDead && !m_DeadShift) {
+            m_Transform.translation.y += 250;
+            m_DeadShift = true;
+        }else if (!m_HeroDead && m_DeadShift) {
+            m_Transform.translation.y -= 250;
+            m_DeadShift = false;
         }
     }
 
@@ -144,7 +152,7 @@ bool Hero::TryMove(int dx, int dy, std::vector<std::vector<int>>& map) {
 
 
     if (m_Steps <= 0) {
-        m_StageOver = true;
+        m_HeroDead = true;
         m_Animation->SetFrameRange(50,  66);
     }
     else if (target == 0) {
