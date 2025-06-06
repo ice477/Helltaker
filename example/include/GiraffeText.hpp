@@ -18,10 +18,11 @@ public:
 
     void Update();
 
+    std::shared_ptr<Util::Text> m_Text;
 private:
     std::string m_Font;
     int m_Size;
-    std::shared_ptr<Util::Text> m_Text;
+
 };
 
 #endif

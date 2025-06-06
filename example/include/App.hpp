@@ -73,6 +73,13 @@ private:
     std::shared_ptr<Decoration> m_Decorate = std::make_shared<Decoration>();
 
     std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
+    int m_StepLimit = 0;         // 當前關卡步數上限
+    int m_StepsLeft = 0;         // 剩餘步數
+    std::shared_ptr<GiraffeText> m_StepText;      // 步數顯示
+    std::shared_ptr<GiraffeText> m_LevelText;     // 關卡顯示
+
+    static constexpr int stepLimits[] = { 100, 30, 35, 40, 45, 50, 55, 60, 65 }; // 依關卡調整
+
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
     std::vector<std::shared_ptr<Gate>> m_Gates;

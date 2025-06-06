@@ -34,6 +34,9 @@ void Trans::Update() {
          SetVisible(false);
      }
 
+    if (m_Hero && m_Hero->HeroDead()) {
+        m_Animation->SetCurrentFrame(0);
+    }
 
      if (Util::Input::IsKeyDown(Util::Keycode::K)) {
          m_Animation->SetCurrentFrame(0);

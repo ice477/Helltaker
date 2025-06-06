@@ -16,7 +16,14 @@ public:
     };
 
     bool m_PassedLevel = false;
+    bool m_Heromve = false;
     bool PassedLevel() const { return m_PassedLevel; }
+
+    bool HeroMove() const {return m_Heromve;}
+
+    int GetSteps() const { return m_Steps; }
+
+    bool HeroDead() const { return m_StageOver; }
 
     State m_State = State::DEFAULT;
 
@@ -31,8 +38,14 @@ public:
 
     void SetOffset(int x, int y) { m_OffsetX = x; m_OffsetY = y; }
 
+    void SetSteps(int steps) { m_Steps = steps; }
+
 private:
     bool m_HasKey = false;
+
+    int m_Steps = 0;
+
+    bool m_StageOver = false;
 
     int m_OffsetX = 0;
     int m_OffsetY = 0;

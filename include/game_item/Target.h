@@ -10,8 +10,8 @@
 
 class Target  : public Box {
 public:
-    Target(int index);
-    void Update(std::vector<std::vector<int>>& m_MapData,int level);
+    Target(int index, int level);
+    void Update(std::vector<std::vector<int>>& m_MapData);
     void SetOffset(int offsetX, int offsetY) {
         m_OffsetX = offsetX;
         m_OffsetY = offsetY;
