@@ -57,10 +57,8 @@ DecorateRight::DecorateRight()
     SetDrawable(m_DecorateRight);
     SetZIndex(5);
 }
-
 //StepCount::StepCount()
-//Dec_Level::Dec_Level()
-
+//Dec_Level::Dec_Level(int level)
 void Decoration::Update() {
     m_Decoration->SetCurrentFrame(1);
 }
