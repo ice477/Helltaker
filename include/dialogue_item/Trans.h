@@ -17,7 +17,7 @@ public:
     std::shared_ptr<Util::Animation> m_Animation;
 
 private:
-
+    std::shared_ptr<Hero> m_Hero = std::make_shared<Hero>();
 };
 
 #endif

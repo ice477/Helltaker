@@ -29,6 +29,15 @@ void App::Start() {
     m_Root.AddChild(m_DecorateLeft);
     m_Root.AddChild(m_DecorateRight);
 
+    m_StepText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf", 80);
+    m_LevelText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,80);
+    m_StepText->Start();
+    m_LevelText->Start();
+    m_StepText->SetZIndex(8);
+    m_LevelText->SetZIndex(8);
+    m_Root.AddChild(m_StepText);
+    m_Root.AddChild(m_LevelText);
+
     m_Root.AddChild(m_Hero);
     for (const auto& gate : m_Gates) {
         m_Root.AddChild(gate);
@@ -60,7 +69,6 @@ void App::Update() {
     m_Trans->Update();
     m_Cat->Update();
     m_Root.Update();
-    Visible();
 
     //dialogueBG.Update(); // 確保背景的 Update 被調用
     //character.Update();  // 確保角色的 Update 被調用
@@ -84,7 +92,6 @@ void App::Push_Box() {
         m_Gates.clear();
         m_Keys.clear();
         m_Traps.clear();
-
 
         // 初始化地圖和物件
         MapManager mapManager;
@@ -133,35 +140,30 @@ void App::Push_Box() {
                         m_Boxes.push_back(std::make_shared<Box>(boxIndex++));
                         m_Boxes.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Boxes.back()->m_Transform.translation = {worldX, worldY};
-                        m_Boxes.back()->SetVisible(true);
                         break;
                     case 4://enemy
                         m_Enemies.push_back(std::make_shared<Enemy>(enemyIndex++));
                         m_Enemies.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Enemies.back()->m_Transform.translation = {worldX, worldY};
-                        m_Enemies.back()->SetVisible(true);
                         break;
                     case 5://gate
                         m_Gates.push_back(std::make_shared<Gate>(gateIndex++));
                         m_Gates.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Gates.back()->m_Transform.translation = {worldX, worldY};
-                        m_Gates.back()->SetVisible(true);
                         break;
                     case 6: // key
                         m_Keys.push_back(std::make_shared<Key>(keyIndex++));
                         m_Keys.back()->SetOffset(m_OffsetX, m_OffsetY);
                         m_Keys.back()->m_Transform.translation = {worldX, worldY};
-                        m_Keys.back()->SetVisible(true);
                         break;
                     case 7: //target
-                        m_Targets.push_back(std::make_shared<Target>(targetIndex++));
+                        m_Targets.push_back(std::make_shared<Target>(targetIndex++,currentLevel));
                         m_Targets.back()->SetOffset(m_OffsetX, m_OffsetY);
-                        m_Targets.back()->m_Transform.translation = {worldX, worldY};
-                        m_Targets.back()->SetVisible(true);
+                        m_Targets.back()->m_Transform.translation = {worldX, worldY + 25};
+                        break;
                     case 8:
                         m_Traps.push_back(std::make_shared<Trap>(trapIndex++));
                         m_Traps.back()->SetOffset(m_OffsetX, m_OffsetY);
-                        m_Traps.back()->SetVisible(true);
                         break;
                     default:
                         break;
@@ -182,15 +184,35 @@ void App::Push_Box() {
         } else {
             LOG_ERROR("Failed to load map for level {}", currentLevel);
         }
-    }
 
-    Visible();
+        // 更新關卡顯示（羅馬數字）
+        static const char* roman[] = {
+            "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+            "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+            "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX"
+        };
+        if (m_LevelText) {
+            m_LevelText->m_Transform.translation = { 530, -200 };
+            m_LevelText->m_Text->SetText(fmt::format("{}", roman[currentLevel]));
+        }
+        m_StepLimit = stepLimits[currentLevel - 1];
+        m_StepsLeft = m_StepLimit;
+        m_Hero->SetSteps(m_StepLimit);
+    }
 
     m_StageBG->Update(currentLevel);
     m_Trans->Update();
 
     if (m_Hero) {
         m_Hero->Update(m_MapData);
+        m_StepsLeft = m_Hero->GetSteps();
+        m_StepText->m_Transform.translation = { -520, -200 };
+        if (m_StepText && m_StepText->m_Text&&m_StepsLeft > 0) {
+            m_StepText->m_Text->SetText(fmt::format("{}", m_StepsLeft));
+        }
+        else if (m_StepText && m_StepText->m_Text&&m_StepsLeft == 0) {
+            m_StepText->m_Text->SetText(fmt::format("X"));
+        }
     }
     for (const auto& box : m_Boxes) box->Update(m_MapData);
     for (const auto& enemy : m_Enemies) enemy->Update(m_MapData);
@@ -198,6 +220,8 @@ void App::Push_Box() {
     for (const auto& key : m_Keys) key->Update(m_MapData);
     for (const auto& trap : m_Traps) trap->Update(m_MapData);
     m_Root.Update();
+
+    Visible();
 
     if (m_Hero && m_Hero->PassedLevel()) {
         LOG_DEBUG("Level passed! Switching to next level.");
@@ -207,6 +231,15 @@ void App::Push_Box() {
         SetOffset(currentLevel);
         isMapLoaded = false;
         m_Hero->m_PassedLevel = false;
+    }
+
+    if (m_Hero->HeroDead()) {
+        if (m_Hero->m_Animation->GetCurrentFrameIndex() == 66) {
+            m_Trans->m_Animation->SetCurrentFrame(0);
+            SetOffset(currentLevel);
+            isMapLoaded = false;
+            m_Hero->m_HeroDead = false; // 重置英雄死亡狀態
+        }
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
@@ -228,13 +261,27 @@ void App::End() {
     LOG_TRACE("End");
 }
 
+
 void App::Visible() {
-    if (m_CurrentState == State::UPDATE) {
-        //m_Character->SetVisible(true);
+    // 1. Hero 死亡時優先處理，只顯示 Hero
+    if (m_Hero && m_Hero->HeroDead()) {
         m_StageBG->SetVisible(false);
-        if (m_Hero) {
-            m_Hero->SetVisible(false);
-        }
+        m_Hero->SetVisible(true);
+        for (const auto& box : m_Boxes) box->SetVisible(false);
+        for (const auto& gate : m_Gates) gate->SetVisible(false);
+        for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
+        for (const auto& key : m_Keys) key->SetVisible(false);
+        for (const auto& target : m_Targets) target->SetVisible(false);
+        for (const auto& trap : m_Traps) trap->SetVisible(false);
+        return;
+    }
+
+    // 2. 其他狀態依照 m_CurrentState 控制
+    if (m_CurrentState == State::UPDATE) {
+        m_StageBG->SetVisible(false);
+        if (m_Hero) m_Hero->SetVisible(false);
+        m_StepText->SetVisible(false);
+        m_LevelText->SetVisible(false);
         for (const auto& box : m_Boxes) box->SetVisible(false);
         for (const auto& gate : m_Gates) gate->SetVisible(false);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
@@ -246,7 +293,8 @@ void App::Visible() {
         m_DecorationRight->SetVisible(false);
         m_DecorateLeft->SetVisible(false);
         m_DecorateRight->SetVisible(false);
-    } else if (m_CurrentState == State::PUSH_BOX) {
+    }
+    else if (m_CurrentState == State::PUSH_BOX) {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(true);
         m_DialogueBG->SetVisible(false);
@@ -254,9 +302,10 @@ void App::Visible() {
         m_DecorationRight->SetVisible(true);
         m_DecorateLeft->SetVisible(true);
         m_DecorateRight->SetVisible(true);
-        if (m_Hero) {
-            m_Hero->SetVisible(true);
-        }
+
+        if (m_Hero) m_Hero->SetVisible(true);
+        m_StepText->SetVisible(true);
+        m_LevelText->SetVisible(true);
         for (const auto& box : m_Boxes) box->SetVisible(true);
         for (const auto& gate : m_Gates) gate->SetVisible(true);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(true);
@@ -267,11 +316,13 @@ void App::Visible() {
         m_Decoration->Update();
         m_DecorateLeft->Update();
         m_DecorateRight->Update();
-    } else {
+    }
+    else {
         m_Character->SetVisible(false);
         m_StageBG->SetVisible(false);
     }
 }
+
 
 void App::CleaObjects() {
     if (m_Hero)

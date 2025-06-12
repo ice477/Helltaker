@@ -16,7 +16,16 @@ public:
     };
 
     bool m_PassedLevel = false;
+    bool m_Heromve = false;
+    bool m_HeroDead = false;
+
     bool PassedLevel() const { return m_PassedLevel; }
+
+    bool HeroMove() const {return m_Heromve;}
+
+    int GetSteps() const { return m_Steps; }
+
+    bool HeroDead() const { return m_HeroDead; }
 
     State m_State = State::DEFAULT;
 
@@ -31,8 +40,16 @@ public:
 
     void SetOffset(int x, int y) { m_OffsetX = x; m_OffsetY = y; }
 
+    void SetSteps(int steps) { m_Steps = steps; }
+
+    std::shared_ptr<Util::Animation> m_Animation;
+
 private:
     bool m_HasKey = false;
+
+    bool m_DeadShift = false;
+
+    int m_Steps = 0;
 
     int m_OffsetX = 0;
     int m_OffsetY = 0;
@@ -45,7 +62,6 @@ private:
     bool m_Initialized = false;
     std::vector<std::vector<int>> m_MapData;
 
-    std::shared_ptr<Util::Animation> m_Animation;
 
     struct Position {
         float x;
