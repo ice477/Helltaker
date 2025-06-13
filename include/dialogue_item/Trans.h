@@ -10,10 +10,13 @@
 #include "../pch.hpp"
 #include "../game_item/Hero.h"
 
+enum class State;
+
+
 class Trans : public Util::GameObject {
 public:
     Trans();
-    void Update();
+    void Update(State appState) ;
     std::shared_ptr<Util::Animation> m_Animation;
 
 private:

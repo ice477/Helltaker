@@ -1,4 +1,5 @@
 #include "Trans.h"
+#include "../example/include/App.hpp"
 
 #include "Util/Input.hpp"
 #include "Util/Keycode.hpp"
@@ -24,7 +25,7 @@ Trans::Trans()
 }
 
 
-void Trans::Update() {
+void Trans::Update(State appState) {
      if (m_Animation->GetCurrentFrameIndex() == 0) {
          m_Animation->Play();
          SetVisible(true);
@@ -38,27 +39,27 @@ void Trans::Update() {
         m_Animation->SetCurrentFrame(0);
     }
 
-    if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
+    if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         m_Animation->SetCurrentFrame(0);
     }
 
-     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
-         m_Animation->SetCurrentFrame(0);
-     }
-
-    if (Util::Input::IsKeyDown(Util::Keycode::R)) {
-        m_Animation->SetCurrentFrame(0);
-    }
-
-    if (Util::Input::IsKeyDown(Util::Keycode::B)) {
-        m_Animation->SetCurrentFrame(0);
-    }
-
-    if (Util::Input::IsKeyDown(Util::Keycode::N)) {
+    if (Util::Input::IsKeyDown(Util::Keycode::SPACE) && appState == State::UPDATE) {
         m_Animation->SetCurrentFrame(0);
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::R)) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::B)&& appState == State::UPDATE) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::N)&& appState == State::UPDATE) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::M)&& appState == State::UPDATE) {
         m_Animation->SetCurrentFrame(0);
     }
  }

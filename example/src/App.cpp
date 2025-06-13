@@ -71,7 +71,7 @@ void App::Update() {
 
     m_Character->Update();
     m_DialogueBG->Update();
-    m_Trans->Update();
+    m_Trans->Update(m_CurrentState);
     m_Cat->Update();
     m_Root.Update();
     m_StageText->Update();
@@ -81,7 +81,7 @@ void App::Update() {
     if (currentLevel == 0) {
         m_StageText->m_Text->SetText(fmt::format("Press SPACE To Start"));
     }
-    else if (currentLevel> 0 && currentLevel < 31) {
+    else if (currentLevel> 0 && currentLevel < 30) {
         m_StageText->m_Text->SetText(fmt::format("STAGE {} CLEAR", currentLevel));
     }
     else {
@@ -91,15 +91,23 @@ void App::Update() {
     //dialogueBG.Update(); // 確保背景的 Update 被調用
     //character.Update();  // 確保角色的 Update 被調用
     if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
-        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
-        currentLevel++;
-        m_CurrentState = State::PUSH_BOX;
+        if (currentLevel == 30) {
+            m_CurrentState = State::END;
+        }
+        else {
+            currentLevel++;
+            m_CurrentState = State::PUSH_BOX;
+        }
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
-        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
-        currentLevel++;
-        m_CurrentState = State::PUSH_BOX;
+        if (currentLevel == 30) {
+            m_CurrentState = State::END;
+        }
+        else {
+            currentLevel++;
+            m_CurrentState = State::PUSH_BOX;
+        }
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::B)) {
@@ -244,7 +252,7 @@ void App::Push_Box() {
     }
 
     m_StageBG->Update(currentLevel);
-    m_Trans->Update();
+    m_Trans->Update(m_CurrentState);
 
     if (m_Hero) {
         m_Hero->Update(m_MapData);

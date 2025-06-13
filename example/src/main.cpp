@@ -15,19 +15,19 @@ int main(int, char **) {
         context->Setup();
 
         switch (app.GetCurrentState()) {
-        case App::State::START:
+        case State::START:
             app.Start();
             break;
 
-        case App::State::UPDATE:
+        case State::UPDATE:
             app.Update();
             break;
 
-        case App::State::PUSH_BOX:
+        case State::PUSH_BOX:
             app.Push_Box();
             break;
 
-        case App::State::END:
+        case State::END:
             app.End();
             context->SetExit(true);
             break;

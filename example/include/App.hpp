@@ -22,15 +22,15 @@
 #include "game_item/Decoration.hpp"
 #include "dialogue_item/Button.h"
 
+enum class State {
+    START,
+    UPDATE,
+    PUSH_BOX,
+    END,
+};
 
 class App {
 public:
-    enum class State {
-        START,
-        UPDATE,
-        PUSH_BOX,
-        END,
-    };
 
     State GetCurrentState() const { return m_CurrentState; }
     State m_NextState = State::START;
