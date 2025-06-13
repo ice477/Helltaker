@@ -23,7 +23,7 @@ void Enemy::Update(std::vector<std::vector<int>>& m_MapData) {
             if (m_MapData[y][x] == 4) { // 4 代表 enemy
                 if (count == m_Index) {
                     m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
-                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE;
+                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE + 10;
                     return;
                 }
                 ++count;

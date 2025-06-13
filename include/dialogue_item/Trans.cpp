@@ -38,9 +38,25 @@ void Trans::Update() {
         m_Animation->SetCurrentFrame(0);
     }
 
+    if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
      if (Util::Input::IsKeyDown(Util::Keycode::K)) {
          m_Animation->SetCurrentFrame(0);
      }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::R)) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::B)) {
+        m_Animation->SetCurrentFrame(0);
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::N)) {
+        m_Animation->SetCurrentFrame(0);
+    }
 
     if (Util::Input::IsKeyDown(Util::Keycode::R)) {
         m_Animation->SetCurrentFrame(0);

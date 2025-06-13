@@ -34,27 +34,44 @@ Target::Target(int index, int level) : Box(index) {
             "../assets/Texture2D/azazel_finalModel0005.png", "../assets/Texture2D/azazel_finalModel0006.png", "../assets/Texture2D/azazel_finalModel0007.png", "../assets/Texture2D/azazel_finalModel0008.png",
             "../assets/Texture2D/azazel_finalModel0009.png", "../assets/Texture2D/azazel_finalModel0010.png", "../assets/Texture2D/azazel_finalModel0011.png", "../assets/Texture2D/azazel_finalModel0012.png",
 
+            "../assets/Texture2D/justice_finalModel0001.png", "../assets/Texture2D/justice_finalModel0002.png", "../assets/Texture2D/justice_finalModel0003.png", "../assets/Texture2D/justice_finalModel0004.png",
+            "../assets/Texture2D/justice_finalModel0005.png", "../assets/Texture2D/justice_finalModel0006.png", "../assets/Texture2D/justice_finalModel0007.png", "../assets/Texture2D/justice_finalModel0008.png",
+            "../assets/Texture2D/justice_finalModel0009.png", "../assets/Texture2D/justice_finalModel0010.png", "../assets/Texture2D/justice_finalModel0011.png", "../assets/Texture2D/justice_finalModel0012.png",
+
+            "../assets/Texture2D/lucy_finalModel0001.png", "../assets/Texture2D/lucy_finalModel0002.png", "../assets/Texture2D/lucy_finalModel0003.png", "../assets/Texture2D/lucy_finalModel0004.png",
+            "../assets/Texture2D/lucy_finalModel0005.png", "../assets/Texture2D/lucy_finalModel0006.png", "../assets/Texture2D/lucy_finalModel0007.png", "../assets/Texture2D/lucy_finalModel0008.png",
+            "../assets/Texture2D/lucy_finalModel0009.png", "../assets/Texture2D/lucy_finalModel0010.png", "../assets/Texture2D/lucy_finalModel0011.png", "../assets/Texture2D/lucy_finalModel0012.png",
+
+            "../assets/Texture2D/judgement_finalModel0001.png", "../assets/Texture2D/judgement_finalModel0002.png", "../assets/Texture2D/judgement_finalModel0003.png", "../assets/Texture2D/judgement_finalModel0004.png",
+            "../assets/Texture2D/judgement_finalModel0005.png", "../assets/Texture2D/judgement_finalModel0006.png", "../assets/Texture2D/judgement_finalModel0007.png", "../assets/Texture2D/judgement_finalModel0008.png",
+            "../assets/Texture2D/judgement_finalModel0009.png", "../assets/Texture2D/judgement_finalModel0010.png", "../assets/Texture2D/judgement_finalModel0011.png", "../assets/Texture2D/judgement_finalModel0012.png",
         },
         true, 50, true, 100);
     m_Transform.scale = {0.75f, 0.75f};
     SetDrawable(m_Animation);
-    if (level == 1) {
+    if (level % 8 == 1) {
         m_Animation->SetFrameRange(0,11);
     }
-    else if (level == 2) {
+    else if (level % 8 == 2) {
         m_Animation->SetFrameRange(12,23);
     }
-    else if (level == 3) {
+    else if (level % 8 == 3) {
         m_Animation->SetFrameRange(24,35);
     }
-    else if (level == 4) {
+    else if (level % 8 == 4) {
         m_Animation->SetFrameRange(36,47);
     }
-    else if (level == 5) {
+    else if (level % 8 == 5) {
         m_Animation->SetFrameRange(48,59);
     }
-    else if (level == 6) {
+    else if (level % 8 == 6) {
         m_Animation->SetFrameRange(60,71);
+    }
+    else if (level % 8 == 7) {
+        m_Animation->SetFrameRange(72,83);
+    }
+    else if (level % 8 == 0) {
+        m_Animation->SetFrameRange(84,95);
     }
     SetZIndex(5);
 }

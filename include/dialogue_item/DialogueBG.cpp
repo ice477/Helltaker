@@ -31,11 +31,9 @@ DialogueBG::DialogueBG()
 
 
 void DialogueBG::Update() {
-    //dialogueBG->SetCurrentFrame(0);
-    // Update logic for DialogueBox if needed
     m_Transform.translation.x += 1;
 
-    if (m_Transform.translation.x >= static_cast<float>(PTSD_Config::WINDOW_WIDTH)-890) {//原本是-1016
+    if (m_Transform.translation.x >= static_cast<float>(PTSD_Config::WINDOW_WIDTH)-1016) {//原本是-1016
         if (dialogueBG->GetCurrentFrameIndex() == 0) {
             dialogueBG->SetCurrentFrame(1);
         } else if (dialogueBG->GetCurrentFrameIndex() == 1) {

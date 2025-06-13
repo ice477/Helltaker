@@ -20,8 +20,8 @@
 #include "game_item/Trap.h"
 #include "game_item/Target.h"
 #include "game_item/Decoration.hpp"
-#include "dialogue_item/DialogueBG.h"
-#include "game_item/Decoration.hpp"
+#include "dialogue_item/Button.h"
+
 
 class App {
 public:
@@ -62,6 +62,7 @@ private:
 
     std::shared_ptr<Character> m_Character = std::make_shared<Character>();
     std::shared_ptr<DialogueBG> m_DialogueBG = std::make_shared<DialogueBG>();
+    std::shared_ptr<Button> m_Button = std::make_shared<Button>();
 
     std::shared_ptr<StageBG> m_StageBG = std::make_shared<StageBG>();
     std::shared_ptr<Decoration> m_Decoration = std::make_shared<Decoration>();
@@ -75,9 +76,13 @@ private:
     int m_StepLimit = 0;         // 當前關卡步數上限
     int m_StepsLeft = 0;         // 剩餘步數
     std::shared_ptr<GiraffeText> m_StepText;      // 步數顯示
-    std::shared_ptr<GiraffeText> m_LevelText;     // 關卡顯示
+    std::shared_ptr<GiraffeText> m_LevelText;
+    std::shared_ptr<GiraffeText> m_StageText;
 
-    static constexpr int stepLimits[] = { 10, 1, 1, 1, 45, 50, 55, 60, 65 }; // 依關卡調整
+    static constexpr int stepLimits[] = { 24, 24, 34, 23, 27, 19, 48, 30, 20, 39,
+                                          28, 24, 27, 29, 16, 28, 30, 28, 22, 27,
+                                          32, 27, 27, 37, 30, 33, 26, 35, 30, 30,
+                                        }; // 依關卡調整
 
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;
@@ -93,7 +98,7 @@ private:
 
     int isReload = false;
 
-    int currentLevel = 1;
+    int currentLevel = 0;
 
     MapManager m_MapManager;
 };

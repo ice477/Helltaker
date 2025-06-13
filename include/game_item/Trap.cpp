@@ -22,7 +22,7 @@ void Trap::Update(std::vector<std::vector<int>>& m_MapData) {
                 m_Animation->Play();
                 if (count == m_Index) {
                     m_Transform.translation.x = m_OffsetX + x * TILE_SIZE;
-                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE + 15;
+                    m_Transform.translation.y = m_OffsetY + (static_cast<int>(m_MapData.size()) - 1 - y) * TILE_SIZE + 30;
                     return;
                 }
                 ++count;

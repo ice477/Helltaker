@@ -23,6 +23,7 @@ void App::Start() {
     m_StageBG->SetVisible(false);
 
     m_Root.AddChild(m_DialogueBG);
+    m_Root.AddChild(m_Button);
 
     m_Root.AddChild(m_Decoration);
     m_Root.AddChild(m_DecorationRight);
@@ -31,12 +32,16 @@ void App::Start() {
 
     m_StepText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf", 80);
     m_LevelText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,80);
+    m_StageText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,60);
     m_StepText->Start();
     m_LevelText->Start();
+    m_StageText->Start();
     m_StepText->SetZIndex(8);
     m_LevelText->SetZIndex(8);
+    m_StageText->SetZIndex(8);
     m_Root.AddChild(m_StepText);
     m_Root.AddChild(m_LevelText);
+    m_Root.AddChild(m_StageText);
 
     m_Root.AddChild(m_Hero);
     for (const auto& gate : m_Gates) {
@@ -69,11 +74,48 @@ void App::Update() {
     m_Trans->Update();
     m_Cat->Update();
     m_Root.Update();
+    m_StageText->Update();
+    m_Button->Update();
+
+    m_LevelText->m_Transform.translation = { 0, 0 };
+    if (currentLevel == 0) {
+        m_StageText->m_Text->SetText(fmt::format("Press SPACE To Start"));
+    }
+    else if (currentLevel> 0 && currentLevel < 31) {
+        m_StageText->m_Text->SetText(fmt::format("STAGE {} CLEAR", currentLevel));
+    }
+    else {
+        m_StageText->m_Text->SetText(fmt::format("ALL STAGE CLEAR"));
+    }
 
     //dialogueBG.Update(); // 確保背景的 Update 被調用
     //character.Update();  // 確保角色的 Update 被調用
+    if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        currentLevel++;
+        m_CurrentState = State::PUSH_BOX;
+    }
+
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        currentLevel++;
+        m_CurrentState = State::PUSH_BOX;
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::B)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        currentLevel = 10;
+        m_CurrentState = State::PUSH_BOX;
+    }
+
+    if (Util::Input::IsKeyDown(Util::Keycode::N)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        currentLevel = 20;
+        m_CurrentState = State::PUSH_BOX;
+    }
+    if (Util::Input::IsKeyDown(Util::Keycode::M)) {
+        LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
+        currentLevel = 30;
         m_CurrentState = State::PUSH_BOX;
     }
 }
@@ -119,6 +161,7 @@ void App::Push_Box() {
             m_Keys.reserve(keyCount);
             m_Targets.reserve(targetCount);
             m_Traps.reserve(trapCount);
+            SetOffset(currentLevel);
 
             int boxIndex = 0, enemyIndex = 0, gateIndex = 0, keyIndex = 0,targetIndex = 0, trapIndex = 0;
             for (int y = 0; y < static_cast<int>(m_MapData.size()); y++) {
@@ -227,8 +270,6 @@ void App::Push_Box() {
         LOG_DEBUG("Level passed! Switching to next level.");
         m_Trans->m_Animation->SetCurrentFrame(0);
         m_CurrentState = State::UPDATE;
-        currentLevel++;
-        SetOffset(currentLevel);
         isMapLoaded = false;
         m_Hero->m_PassedLevel = false;
     }
@@ -245,13 +286,13 @@ void App::Push_Box() {
     if (Util::Input::IsKeyDown(Util::Keycode::K)) {
         LOG_DEBUG("K Pressed. Switching to UPDATE scene.");
         m_CurrentState = State::UPDATE;
-        currentLevel++;
-        SetOffset(currentLevel);
+        m_Hero->m_HeroDead = false;
         isMapLoaded = false; // 重置地圖加載狀態
     }
 
     if (Util::Input::IsKeyDown(Util::Keycode::R)) {
         LOG_DEBUG("R Pressed. Reloading current level.");
+        m_Hero->m_HeroDead = false;
         isMapLoaded = false;
 
     }
@@ -282,6 +323,8 @@ void App::Visible() {
         if (m_Hero) m_Hero->SetVisible(false);
         m_StepText->SetVisible(false);
         m_LevelText->SetVisible(false);
+        m_StageText->SetVisible(true);
+        m_Button->SetVisible(true);
         for (const auto& box : m_Boxes) box->SetVisible(false);
         for (const auto& gate : m_Gates) gate->SetVisible(false);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(false);
@@ -302,10 +345,12 @@ void App::Visible() {
         m_DecorationRight->SetVisible(true);
         m_DecorateLeft->SetVisible(true);
         m_DecorateRight->SetVisible(true);
+        m_Button->SetVisible(false);
 
         if (m_Hero) m_Hero->SetVisible(true);
         m_StepText->SetVisible(true);
         m_LevelText->SetVisible(true);
+        m_StageText->SetVisible(false);
         for (const auto& box : m_Boxes) box->SetVisible(true);
         for (const auto& gate : m_Gates) gate->SetVisible(true);
         for (const auto& enemy : m_Enemies) enemy->SetVisible(true);
@@ -346,25 +391,25 @@ void App::CleaObjects() {
 
 
 void App::SetOffset(int currentLevel) {
-    if (currentLevel == 1 || currentLevel == 2) {
+    if (currentLevel == 1 || currentLevel == 2 || currentLevel == 9 || currentLevel == 13 || currentLevel == 20 || currentLevel == 29 || currentLevel == 30) {
         m_OffsetX = -300;
         m_OffsetY = -275;
-    } else if (currentLevel == 3) {
+    } else if (currentLevel == 3 || currentLevel == 10 || currentLevel == 28) {
         m_OffsetX = -335;
         m_OffsetY = -310;
-    }else if (currentLevel == 4) {
+    }else if (currentLevel == 4 || currentLevel == 14 || currentLevel == 16 || currentLevel == 27) {
         m_OffsetX = -335;
         m_OffsetY = -235;
-    } else if (currentLevel == 5) {
+    } else if (currentLevel == 5 || currentLevel == 11 || currentLevel == 22 || currentLevel == 26) {
         m_OffsetX = -260;
         m_OffsetY = -310;
-    } else if (currentLevel == 6) {
+    } else if (currentLevel == 6 || currentLevel == 15 || currentLevel == 17 || currentLevel == 25) {
         m_OffsetX = -300;
         m_OffsetY = -350;
-    } else if (currentLevel == 7) {
+    } else if (currentLevel == 7 || currentLevel == 12 || currentLevel == 18 || currentLevel == 21 || currentLevel == 24) {
         m_OffsetX = -260;
         m_OffsetY = -315;
-    } else if (currentLevel == 8) {
+    } else if (currentLevel == 8 || currentLevel == 19 || currentLevel == 23 ) {
         m_OffsetX = -375;
         m_OffsetY = -340;
 

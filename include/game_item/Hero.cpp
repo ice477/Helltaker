@@ -58,7 +58,7 @@ void Hero::SetMapData(const std::vector<std::vector<int>>& mapData, int offsetX,
                 m_PosX = x;
                 m_PosY = y;
                 m_Transform.translation.x = offsetX + x * TILE_SIZE;
-                m_Transform.translation.y = offsetY + (mapHeight - 1 - y) * TILE_SIZE;
+                m_Transform.translation.y = offsetY + (mapHeight - 1 - y) * TILE_SIZE + 10;
                 m_OffsetX = offsetX;
                 m_OffsetY = offsetY;
                 m_Initialized = false;
