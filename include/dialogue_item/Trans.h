@@ -16,7 +16,7 @@ enum class State;
 class Trans : public Util::GameObject {
 public:
     Trans();
-    void Update(State appState) ;
+    void Update(State appState, bool textEnd) ;
     std::shared_ptr<Util::Animation> m_Animation;
 
 private:

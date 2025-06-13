@@ -11,6 +11,7 @@
 #include "dialogue_item/Trans.h"
 #include "dialogue_item/Character.h"
 #include "dialogue_item/DialogueBG.h"
+#include "dialogue_item/TextLoader.h"
 #include "game_item/Box.h"
 #include "game_item/Hero.h"
 #include "game_item/StageBG.h"
@@ -48,6 +49,9 @@ public:
     int m_OffsetX = -300;
     int m_OffsetY = -275;
 
+    TextLoader m_TextLoader;
+    int m_DialogueIndex = 0;
+    bool textEnd = false;
     std::vector<std::vector<int>> m_MapData;
 
 private:

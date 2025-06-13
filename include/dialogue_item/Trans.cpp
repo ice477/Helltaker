@@ -25,7 +25,7 @@ Trans::Trans()
 }
 
 
-void Trans::Update(State appState) {
+void Trans::Update(State appState, bool textEnd) {
      if (m_Animation->GetCurrentFrameIndex() == 0) {
          m_Animation->Play();
          SetVisible(true);
@@ -43,7 +43,7 @@ void Trans::Update(State appState) {
         m_Animation->SetCurrentFrame(0);
     }
 
-    if (Util::Input::IsKeyDown(Util::Keycode::SPACE) && appState == State::UPDATE) {
+    if (Util::Input::IsKeyDown(Util::Keycode::SPACE) && appState == State::UPDATE && textEnd == true) {
         m_Animation->SetCurrentFrame(0);
     }
 

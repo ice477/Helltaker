@@ -138,6 +138,8 @@ set(EXAMPLE_FILES
         include/game_item/Target.h
         include/dialogue_item/Button.cpp
         include/dialogue_item/Button.h
+        include/dialogue_item/TextLoader.cpp
+        include/dialogue_item/TextLoader.h
 )
 set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 set(TEST_FILES

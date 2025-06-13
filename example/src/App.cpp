@@ -5,9 +5,10 @@
 #include "Util/Keycode.hpp"
 #include "Util/Logger.hpp"
 #include "Util/Renderer.hpp"
-#include "game_item/StageBG.h"
-#include "game_item/MapManager.h"
 #include "game_item/Decoration.hpp"
+#include "game_item/MapManager.h"
+#include "game_item/StageBG.h"
+#include "spdlog/fmt/bundled/compile.h"
 
 void App::Start() {
     LOG_TRACE("Start");
@@ -42,6 +43,8 @@ void App::Start() {
     m_Root.AddChild(m_StepText);
     m_Root.AddChild(m_LevelText);
     m_Root.AddChild(m_StageText);
+    m_TextLoader.LoadText(0);
+    m_DialogueIndex = 0;
 
     m_Root.AddChild(m_Hero);
     for (const auto& gate : m_Gates) {
@@ -69,9 +72,11 @@ void App::Start() {
 void App::Update() {
     Visible();
 
+    const auto& texts = m_TextLoader.GetText();
+
     m_Character->Update();
     m_DialogueBG->Update();
-    m_Trans->Update(m_CurrentState);
+    m_Trans->Update(m_CurrentState,textEnd);
     m_Cat->Update();
     m_Root.Update();
     m_StageText->Update();
@@ -79,7 +84,10 @@ void App::Update() {
 
     m_LevelText->m_Transform.translation = { 0, 0 };
     if (currentLevel == 0) {
-        m_StageText->m_Text->SetText(fmt::format("Press SPACE To Start"));
+        const auto& texts = m_TextLoader.GetText();
+        if (!texts.empty() && m_DialogueIndex < texts.size()) {
+            m_StageText->m_Text->SetText(texts[m_DialogueIndex]);
+        }
     }
     else if (currentLevel> 0 && currentLevel < 30) {
         m_StageText->m_Text->SetText(fmt::format("STAGE {} CLEAR", currentLevel));
@@ -90,13 +98,23 @@ void App::Update() {
 
     //dialogueBG.Update(); // 確保背景的 Update 被調用
     //character.Update();  // 確保角色的 Update 被調用
+    if (m_DialogueIndex == texts.size()-1) {
+        textEnd = true;
+    }
     if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
-        if (currentLevel == 30) {
-            m_CurrentState = State::END;
+        if (m_DialogueIndex + 1 < texts.size()) {
+            m_DialogueIndex++;
         }
         else {
-            currentLevel++;
-            m_CurrentState = State::PUSH_BOX;
+            if (currentLevel == 30) {
+                m_CurrentState = State::END;
+            }
+            else {
+                m_DialogueIndex = 0;
+                currentLevel++;
+                m_CurrentState = State::PUSH_BOX;
+                textEnd = false;
+            }
         }
     }
 
@@ -252,7 +270,7 @@ void App::Push_Box() {
     }
 
     m_StageBG->Update(currentLevel);
-    m_Trans->Update(m_CurrentState);
+    m_Trans->Update(m_CurrentState,textEnd);
 
     if (m_Hero) {
         m_Hero->Update(m_MapData);
