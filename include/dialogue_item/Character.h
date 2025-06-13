@@ -10,7 +10,7 @@ class Character : public Util::GameObject {
 public:
     Character();
 
-    void Update();
+    void Update(int level);
 
 private:
     std::shared_ptr<Util::Animation> m_Animation;

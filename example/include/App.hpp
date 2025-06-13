@@ -52,6 +52,7 @@ public:
     TextLoader m_TextLoader;
     int m_DialogueIndex = 0;
     bool textEnd = false;
+    bool isloadtext = false;
     std::vector<std::vector<int>> m_MapData;
 
 private:
@@ -82,11 +83,14 @@ private:
     std::shared_ptr<GiraffeText> m_StepText;      // 步數顯示
     std::shared_ptr<GiraffeText> m_LevelText;
     std::shared_ptr<GiraffeText> m_StageText;
+    std::shared_ptr<GiraffeText> m_CharacterName;
 
     static constexpr int stepLimits[] = { 24, 24, 34, 23, 27, 19, 48, 30, 20, 39,
                                           28, 24, 27, 29, 16, 28, 30, 28, 22, 27,
                                           32, 27, 27, 37, 30, 33, 26, 35, 30, 30,
                                         }; // 依關卡調整
+
+
 
     std::vector<std::shared_ptr<Box>> m_Boxes;
     std::vector<std::shared_ptr<Enemy>> m_Enemies;

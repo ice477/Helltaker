@@ -14,8 +14,6 @@ void App::Start() {
     LOG_TRACE("Start");
 
     m_Root.AddChild(m_Character);
-    m_Character->SetVisible(false);
-
 
     m_Root.AddChild(m_Trans);
     m_Root.AddChild(m_Trans);
@@ -33,7 +31,8 @@ void App::Start() {
 
     m_StepText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf", 80);
     m_LevelText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,80);
-    m_StageText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,60);
+    m_StageText = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf" ,30);
+    m_CharacterName = std::make_shared<GiraffeText>("../assets/fonts/Inter.ttf", 30);
     m_StepText->Start();
     m_LevelText->Start();
     m_StageText->Start();
@@ -72,9 +71,17 @@ void App::Start() {
 void App::Update() {
     Visible();
 
+
+    if (m_CurrentState == State::UPDATE && !isloadtext) {
+        m_TextLoader.LoadText(currentLevel);
+        m_DialogueIndex = 0;
+        textEnd = false;
+        isloadtext = true;
+    }
+
     const auto& texts = m_TextLoader.GetText();
 
-    m_Character->Update();
+    m_Character->Update(currentLevel);
     m_DialogueBG->Update();
     m_Trans->Update(m_CurrentState,textEnd);
     m_Cat->Update();
@@ -82,22 +89,23 @@ void App::Update() {
     m_StageText->Update();
     m_Button->Update();
 
-    m_LevelText->m_Transform.translation = { 0, 0 };
-    if (currentLevel == 0) {
-        const auto& texts = m_TextLoader.GetText();
+    m_CharacterName->m_Transform.translation = { -500, -100 };
+    //m_CharacterName->m_Text->SetText(fmt::format("{}",name[currentLevel]));
+    static const char* name[] = {
+        "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+        "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+        "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX"
+    };
+    m_StageText->m_Transform.translation = { 0, -200 };
+    if (currentLevel < 30) {
         if (!texts.empty() && m_DialogueIndex < texts.size()) {
             m_StageText->m_Text->SetText(texts[m_DialogueIndex]);
         }
-    }
-    else if (currentLevel> 0 && currentLevel < 30) {
-        m_StageText->m_Text->SetText(fmt::format("STAGE {} CLEAR", currentLevel));
     }
     else {
         m_StageText->m_Text->SetText(fmt::format("ALL STAGE CLEAR"));
     }
 
-    //dialogueBG.Update(); // 確保背景的 Update 被調用
-    //character.Update();  // 確保角色的 Update 被調用
     if (m_DialogueIndex == texts.size()-1) {
         textEnd = true;
     }
@@ -143,6 +151,9 @@ void App::Update() {
         LOG_DEBUG("K Pressed. Switching to PUSH_BOX scene.");
         currentLevel = 30;
         m_CurrentState = State::PUSH_BOX;
+    }
+    if (m_CurrentState == State::PUSH_BOX) {
+        isloadtext = false; // 每次進入推箱子時重設
     }
 }
 
@@ -346,6 +357,7 @@ void App::Visible() {
     // 2. 其他狀態依照 m_CurrentState 控制
     if (m_CurrentState == State::UPDATE) {
         m_StageBG->SetVisible(false);
+        m_Character->SetVisible(true);
         if (m_Hero) m_Hero->SetVisible(false);
         m_StepText->SetVisible(false);
         m_LevelText->SetVisible(false);

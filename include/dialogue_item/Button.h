@@ -10,6 +10,7 @@
 #include "../Util/image.hpp"
 #include "../pch.hpp"
 
+
 class Button : public Util::GameObject {
 public:
     Button();
@@ -18,6 +19,8 @@ public:
 
 private:
     std::shared_ptr<Util::Animation> m_Animation;
+
+    bool m_IsPressed;
 };
 
 #endif //BUTTON_H

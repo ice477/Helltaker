@@ -3,7 +3,8 @@
 //
 
 #include "Button.h"
-
+#include "Util/Input.hpp"
+#include "Util/Keycode.hpp"
 
 Button::Button()
     : m_Animation(std::make_shared<Util::Animation>(
@@ -18,13 +19,26 @@ Button::Button()
           },
           true, 50, true, 100)) {
 
-    m_Transform.translation={0,-200};
-    m_Transform.scale ={2.0f, 2.0f};
-    m_Animation->SetFrameRange(0, 11); // 設置動畫範圍
+    m_Transform.translation={0,-300};
+    m_Transform.scale ={1.5f, 1.5f};
+    m_Animation->SetFrameRange(0, 17); // 設置動畫範圍
     SetDrawable(m_Animation);
     SetZIndex(8);
 }
 
 void Button::Update() {
     m_Animation->Play();
+
+    if (Util::Input::IsKeyDown(Util::Keycode::SPACE)) {
+        m_Animation->SetFrameRange(17,27);
+        m_IsPressed = true;
+    }
+
+    if (m_IsPressed && m_Animation->GetCurrentFrameIndex() == 27) {
+        m_IsPressed = false;
+        m_Animation->SetFrameRange(0, 11);
+        m_Animation->SetCurrentFrame(0);
+
+
+    }
 }
